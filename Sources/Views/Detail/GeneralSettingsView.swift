@@ -57,17 +57,17 @@ struct GeneralSettingsView: View {
 
                 OptionalPicker("View Mode", selection: settings.viewMode) {
                     ForEach(ViewMode.allCases) { v in
-                        Text(v.rawValue.capitalized).tag(Optional(v))
+                        Text(v.label).tag(Optional(v))
                     }
                 }
-                .described("Verbose: more detail. Focus: hides tool calls for a cleaner view.")
+                .described("Normal: standard output. Verbose: more detail. Focus: hides tool calls.")
 
                 OptionalPicker("TUI Mode", selection: settings.tui) {
                     ForEach(TUIMode.allCases) { v in
-                        Text(v.rawValue.capitalized).tag(Optional(v))
+                        Text(v.label).tag(Optional(v))
                     }
                 }
-                .described("Fullscreen: alternate terminal buffer (like vim). Default: renders inline.")
+                .described("Fullscreen: alternate terminal buffer (like vim). Inline: renders in place.")
 
                 OptionalToggle("Syntax Highlighting", isOn: invertedOptional(settings.syntaxHighlightingDisabled))
                     .described("Colored syntax highlighting in code diffs.")

@@ -111,11 +111,24 @@ enum DefaultView: String, Codable, CaseIterable, Identifiable {
 enum TUIMode: String, Codable, CaseIterable, Identifiable {
     case fullscreen, `default`
     var id: Self { self }
+    var label: String {
+        switch self {
+        case .fullscreen: "Fullscreen"
+        case .default: "Inline"
+        }
+    }
 }
 
 enum ViewMode: String, Codable, CaseIterable, Identifiable {
     case `default`, verbose, focus
     var id: Self { self }
+    var label: String {
+        switch self {
+        case .default: "Normal"
+        case .verbose: "Verbose"
+        case .focus: "Focus"
+        }
+    }
 }
 
 enum UpdateChannel: String, Codable, CaseIterable, Identifiable {
