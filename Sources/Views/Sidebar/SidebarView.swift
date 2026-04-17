@@ -38,19 +38,40 @@ struct SidebarView: View {
 
     private var scopePicker: some View {
         @Bindable var appState = appState
-        return Picker(selection: $appState.selectedScope) {
-            ForEach(ConfigScope.allCases) { scope in
-                Text(scope.label).tag(scope)
+        return VStack(spacing: 6) {
+            Picker(selection: $appState.selectedScope) {
+                ForEach(ConfigScope.allCases) { scope in
+                    Text(scope.label).tag(scope)
+                }
+            } label: {
+                EmptyView()
             }
-        } label: {
-            EmptyView()
+            .pickerStyle(.segmented)
+            .onChange(of: appState.selectedScope) { _, newScope in
+                appState.switchScope(newScope)
+            }
+
+            if appState.selectedScope != .user {
+                Picker(selection: Binding(
+                    get: { appState.selectedProjectRoot },
+                    set: { url in
+                        let project = appState.knownProjects.first { $0.rootURL == url }
+                        appState.selectProject(project)
+                    }
+                )) {
+                    Text("Select project…").tag(nil as URL?)
+                    Divider()
+                    ForEach(appState.knownProjects) { project in
+                        Text(project.displayName).tag(Optional(project.rootURL))
+                    }
+                } label: {
+                    EmptyView()
+                }
+                .controlSize(.small)
+            }
         }
-        .pickerStyle(.segmented)
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .onChange(of: appState.selectedScope) { _, newScope in
-            appState.switchScope(newScope)
-        }
     }
 
     private var statusBar: some View {

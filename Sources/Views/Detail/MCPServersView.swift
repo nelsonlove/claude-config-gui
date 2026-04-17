@@ -8,7 +8,7 @@ struct MCPServersView: View {
     @State private var pluginServers: [PluginMCPServer] = []
 
     private var mcpURL: URL {
-        appState.selectedScope.mcpURL()
+        appState.selectedScope.mcpURL(projectRoot: appState.selectedProjectRoot)
     }
 
     var body: some View {
@@ -135,6 +135,7 @@ struct MCPServersView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear { loadForCurrentScope() }
         .onChange(of: appState.selectedScope) { _, _ in loadForCurrentScope() }
+        .onChange(of: appState.selectedProjectRoot) { _, _ in loadForCurrentScope() }
     }
 
     private func loadForCurrentScope() {

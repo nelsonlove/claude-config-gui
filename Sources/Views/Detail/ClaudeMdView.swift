@@ -5,7 +5,7 @@ struct ClaudeMdView: View {
     @State private var editor = MarkdownFileEditor()
 
     private var fileURL: URL {
-        appState.selectedScope.claudeMdURL()
+        appState.selectedScope.claudeMdURL(projectRoot: appState.selectedProjectRoot)
     }
 
     var body: some View {
@@ -53,6 +53,7 @@ struct ClaudeMdView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear { loadForCurrentScope() }
         .onChange(of: appState.selectedScope) { _, _ in loadForCurrentScope() }
+        .onChange(of: appState.selectedProjectRoot) { _, _ in loadForCurrentScope() }
     }
 
     private func loadForCurrentScope() {
