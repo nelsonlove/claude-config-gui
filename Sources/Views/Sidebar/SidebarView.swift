@@ -31,10 +31,12 @@ struct SidebarView: View {
 
     private var scopePicker: some View {
         @Bindable var appState = appState
-        return Picker("Scope", selection: $appState.selectedScope) {
+        return Picker(selection: $appState.selectedScope) {
             ForEach(ConfigScope.allCases) { scope in
                 Text(scope.label).tag(scope)
             }
+        } label: {
+            EmptyView()
         }
         .pickerStyle(.segmented)
         .padding(.horizontal, 12)

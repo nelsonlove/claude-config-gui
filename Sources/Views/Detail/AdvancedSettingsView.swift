@@ -28,9 +28,9 @@ struct AdvancedSettingsView: View {
                     get: { settings.wrappedValue.attribution ?? Attribution() },
                     set: { settings.wrappedValue.attribution = $0 }
                 )
-                TextField("Commit Message", text: optionalString(attribution.commit))
+                TextField("Commit Message", text: optionalString(attribution.commit), prompt: Text("e.g. Co-authored-by: Claude"))
                     .described("Custom text appended to git commit messages.")
-                TextField("PR Description", text: optionalString(attribution.pr))
+                TextField("PR Description", text: optionalString(attribution.pr), prompt: Text("e.g. Generated with Claude"))
                     .described("Custom text appended to pull request descriptions.")
             }
 
@@ -39,7 +39,7 @@ struct AdvancedSettingsView: View {
                     get: { settings.wrappedValue.statusLine ?? StatusLineConfig() },
                     set: { settings.wrappedValue.statusLine = $0 }
                 )
-                TextField("Command", text: optionalString(statusLine.command))
+                TextField("Command", text: optionalString(statusLine.command), prompt: Text("e.g. bash ~/.claude/statusline.sh"))
                     .font(.system(.body, design: .monospaced))
                     .described("Shell command whose stdout becomes the status line text.")
             }
@@ -77,7 +77,7 @@ struct AdvancedSettingsView: View {
             }
 
             Section("Authentication") {
-                TextField("API Key Helper", text: optionalString(settings.apiKeyHelper))
+                TextField("API Key Helper", text: optionalString(settings.apiKeyHelper), prompt: Text("/path/to/auth-script"))
                     .described("Path to a script that outputs API authentication values.")
 
                 OptionalPicker("Force Login Method", selection: settings.forceLoginMethod) {
@@ -87,7 +87,7 @@ struct AdvancedSettingsView: View {
                 }
                 .described("claudeai: OAuth via claude.ai. console: Anthropic Console API keys.")
 
-                TextField("Force Login Org UUID", text: optionalString(settings.forceLoginOrgUUID))
+                TextField("Force Login Org UUID", text: optionalString(settings.forceLoginOrgUUID), prompt: Text("org-uuid-here"))
                     .described("Lock login to a specific organization for SSO/enterprise setups.")
             }
 

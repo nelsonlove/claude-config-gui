@@ -14,8 +14,8 @@ struct GeneralSettingsView: View {
 
         Form {
             Section("Model") {
-                TextField("Model ID", text: optionalString(settings.model))
-                    .described("Override the default model, e.g. claude-sonnet-4-6")
+                TextField("Model ID", text: optionalString(settings.model), prompt: Text("e.g. claude-sonnet-4-6"))
+                    .described("Override the default model.")
 
                 OptionalPicker("Effort Level", selection: settings.effortLevel) {
                     ForEach(EffortLevel.allCases) { level in
@@ -43,10 +43,10 @@ struct GeneralSettingsView: View {
             }
 
             Section("Display") {
-                TextField("Output Style", text: optionalString(settings.outputStyle))
-                    .described("Named style controlling response formatting, e.g. \"explanatory\", \"concise\".")
-                TextField("Language", text: optionalString(settings.language))
-                    .described("Preferred language for responses and voice, e.g. \"en\", \"ja\", \"es\".")
+                TextField("Output Style", text: optionalString(settings.outputStyle), prompt: Text("e.g. explanatory, concise"))
+                    .described("Named style controlling response formatting.")
+                TextField("Language", text: optionalString(settings.language), prompt: Text("e.g. en, ja, es"))
+                    .described("Preferred language for responses and voice.")
 
                 OptionalPicker("Default View", selection: settings.defaultView) {
                     ForEach(DefaultView.allCases) { v in
