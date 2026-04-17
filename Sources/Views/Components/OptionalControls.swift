@@ -41,7 +41,11 @@ struct OptionalToggle: View {
         HStack {
             Toggle(label, isOn: Binding(
                 get: { isOn ?? false },
-                set: { isOn = $0 }
+                set: { newValue in
+                    // Checking sets true; unchecking clears to nil (unset/default).
+                    // Use the raw JSON editor to set an explicit false if needed.
+                    isOn = newValue ? true : nil
+                }
             ))
             .toggleStyle(.checkbox)
 

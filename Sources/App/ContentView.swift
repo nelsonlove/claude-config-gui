@@ -52,6 +52,12 @@ struct ContentView: View {
         .keyboardShortcut(for: .save) {
             appState.configEditor.save()
         }
+        .keyboardShortcut(for: .undo) {
+            appState.configEditor.undoManager.undo()
+        }
+        .keyboardShortcut(for: .redo) {
+            appState.configEditor.undoManager.redo()
+        }
     }
 }
 
@@ -68,17 +74,21 @@ extension View {
 }
 
 enum KeyAction {
-    case save
+    case save, undo, redo
 
     var key: KeyEquivalent {
         switch self {
         case .save: "s"
+        case .undo: "z"
+        case .redo: "z"
         }
     }
 
     var modifiers: EventModifiers {
         switch self {
         case .save: .command
+        case .undo: .command
+        case .redo: [.command, .shift]
         }
     }
 }

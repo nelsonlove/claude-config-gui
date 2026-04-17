@@ -7,10 +7,7 @@ struct GeneralSettingsView: View {
 
     var body: some View {
         @Bindable var appState = appState
-        let settings = Binding(
-            get: { self.editor.settings },
-            set: { self.editor.settings = $0; self.editor.markDirty() }
-        )
+        let settings = editor.settingsBinding
 
         Form {
             Section("Model") {

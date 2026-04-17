@@ -20,10 +20,11 @@ struct PluginsView: View {
                             Toggle(isOn: Binding(
                                 get: { enabled },
                                 set: { newValue in
-                                    var plugins = editor.settings.enabledPlugins ?? [:]
-                                    plugins[key] = newValue
-                                    editor.settings.enabledPlugins = plugins
-                                    editor.markDirty()
+                                    editor.mutate { settings in
+                                        var plugins = settings.enabledPlugins ?? [:]
+                                        plugins[key] = newValue
+                                        settings.enabledPlugins = plugins
+                                    }
                                 }
                             )) {
                                 VStack(alignment: .leading) {
@@ -41,10 +42,11 @@ struct PluginsView: View {
                             Spacer()
 
                             Button(role: .destructive) {
-                                var plugins = editor.settings.enabledPlugins ?? [:]
-                                plugins.removeValue(forKey: key)
-                                editor.settings.enabledPlugins = plugins.isEmpty ? nil : plugins
-                                editor.markDirty()
+                                editor.mutate { settings in
+                                    var plugins = settings.enabledPlugins ?? [:]
+                                    plugins.removeValue(forKey: key)
+                                    settings.enabledPlugins = plugins.isEmpty ? nil : plugins
+                                }
                             } label: {
                                 Image(systemName: "minus.circle.fill")
                                     .foregroundStyle(.red)

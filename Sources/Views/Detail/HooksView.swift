@@ -73,28 +73,29 @@ struct HooksView: View {
     }
 
     private func updateHook(event: String, groups: [HookGroup]) {
-        var hooks = editor.settings.hooks ?? [:]
-        hooks[event] = groups
-        editor.settings.hooks = hooks
-        editor.markDirty()
+        editor.mutate { settings in
+            var hooks = settings.hooks ?? [:]
+            hooks[event] = groups
+            settings.hooks = hooks
+        }
     }
 
     private func deleteHook(event: String) {
-        var hooks = editor.settings.hooks ?? [:]
-        hooks.removeValue(forKey: event)
-        if hooks.isEmpty { editor.settings.hooks = nil }
-        else { editor.settings.hooks = hooks }
-        editor.markDirty()
+        editor.mutate { settings in
+            var hooks = settings.hooks ?? [:]
+            hooks.removeValue(forKey: event)
+            settings.hooks = hooks.isEmpty ? nil : hooks
+        }
     }
 
     private func addHook(event: String) {
-        var hooks = editor.settings.hooks ?? [:]
-        let newGroup = HookGroup(
-            hooks: [HookHandler(type: .command, command: "echo 'hello'")]
-        )
-        hooks[event] = [newGroup]
-        editor.settings.hooks = hooks
-        editor.markDirty()
+        editor.mutate { settings in
+            var hooks = settings.hooks ?? [:]
+            hooks[event] = [HookGroup(
+                hooks: [HookHandler(type: .command, command: "echo 'hello'")]
+            )]
+            settings.hooks = hooks
+        }
     }
 }
 

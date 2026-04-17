@@ -6,10 +6,7 @@ struct AdvancedSettingsView: View {
     private var editor: ConfigEditor { appState.configEditor }
 
     var body: some View {
-        let settings = Binding(
-            get: { self.editor.settings },
-            set: { self.editor.settings = $0; self.editor.markDirty() }
-        )
+        let settings = editor.settingsBinding
 
         Form {
             Section("Shell & Git") {

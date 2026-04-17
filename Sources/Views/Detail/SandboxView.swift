@@ -8,7 +8,7 @@ struct SandboxView: View {
     var body: some View {
         let sandbox = Binding(
             get: { self.editor.settings.sandbox ?? SandboxConfig() },
-            set: { self.editor.settings.sandbox = $0; self.editor.markDirty() }
+            set: { newValue in self.editor.mutate { $0.sandbox = newValue } }
         )
 
         Form {

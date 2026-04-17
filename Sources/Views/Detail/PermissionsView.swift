@@ -6,14 +6,11 @@ struct PermissionsView: View {
     private var editor: ConfigEditor { appState.configEditor }
 
     var body: some View {
-        let settings = Binding(
-            get: { self.editor.settings },
-            set: { self.editor.settings = $0; self.editor.markDirty() }
-        )
+        let settings = editor.settingsBinding
 
         let permissions = Binding(
             get: { self.editor.settings.permissions ?? Permissions() },
-            set: { self.editor.settings.permissions = $0; self.editor.markDirty() }
+            set: { newValue in self.editor.mutate { $0.permissions = newValue } }
         )
 
         Form {
@@ -81,11 +78,18 @@ struct PermissionRulesList: View {
         Section {
             ForEach(Array(rules.enumerated()), id: \.offset) { index, rule in
                 HStack {
-                    Image(systemName: ruleIcon(for: rule))
-                        .foregroundStyle(.secondary)
+                    Image(systemName: ruleValidation(rule) != nil ? "exclamationmark.triangle.fill" : ruleIcon(for: rule))
+                        .foregroundColor(ruleValidation(rule) != nil ? .red : .secondary)
                         .frame(width: 20)
-                    Text(rule)
-                        .font(.system(.body, design: .monospaced))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(rule)
+                            .font(.system(.body, design: .monospaced))
+                        if let warning = ruleValidation(rule) {
+                            Text(warning)
+                                .font(.caption)
+                                .foregroundStyle(.red)
+                        }
+                    }
                     Spacer()
                     Button(role: .destructive) {
                         rules.remove(at: index)
@@ -143,6 +147,42 @@ struct PermissionRulesList: View {
         if rule.hasPrefix("mcp_") { return "server.rack" }
         if rule.hasPrefix("Agent") { return "person.2" }
         return "lock"
+    }
+
+    /// Returns a warning message if the rule looks malformed, nil if valid.
+    private func ruleValidation(_ rule: String) -> String? {
+        let knownTools = [
+            "Bash", "Read", "Edit", "Write", "Glob", "Grep",
+            "WebFetch", "WebSearch", "Agent", "Skill",
+            "NotebookEdit", "NotebookRead", "LSP"
+        ]
+
+        // Check for unbalanced parens
+        let opens = rule.filter { $0 == "(" }.count
+        let closes = rule.filter { $0 == ")" }.count
+        if opens != closes {
+            return "Unbalanced parentheses"
+        }
+
+        // Extract the tool name (before "(" or the whole string)
+        let toolName: String
+        if let parenIdx = rule.firstIndex(of: "(") {
+            toolName = String(rule[rule.startIndex..<parenIdx])
+        } else {
+            toolName = rule
+        }
+
+        // MCP tools use mcp__ prefix
+        if toolName.hasPrefix("mcp__") || toolName.hasPrefix("mcp_") {
+            return nil
+        }
+
+        // Check against known tool names
+        if !knownTools.contains(toolName) && !toolName.isEmpty {
+            return "Unknown tool: \(toolName)"
+        }
+
+        return nil
     }
 }
 

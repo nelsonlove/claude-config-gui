@@ -1,5 +1,4 @@
-import Foundation
-import Combine
+import SwiftUI
 
 @Observable
 final class ConfigEditor {
@@ -12,6 +11,7 @@ final class ConfigEditor {
 
     let scope: ConfigScope
     let fileURL: URL
+    let undoManager = UndoManager()
 
     private var saveTask: Task<Void, Never>?
     private var fileMonitorSource: DispatchSourceFileSystemObject?
@@ -33,16 +33,15 @@ final class ConfigEditor {
     func load() {
         do {
             let data = try Data(contentsOf: fileURL)
-            let decoder = JSONDecoder()
-            settings = try decoder.decode(ClaudeSettings.self, from: data)
+            settings = try JSONDecoder().decode(ClaudeSettings.self, from: data)
             isDirty = false
             loadError = nil
+            undoManager.removeAllActions()
             startWatching()
         } catch let error as DecodingError {
             loadError = "Parse error: \(error.localizedDescription)"
         } catch {
             if (error as NSError).code == NSFileReadNoSuchFileError {
-                // File doesn't exist yet — start with empty settings
                 settings = ClaudeSettings()
                 isDirty = false
                 loadError = nil
@@ -57,6 +56,33 @@ final class ConfigEditor {
     func markDirty() {
         isDirty = true
         scheduleSave()
+    }
+
+    /// Call before mutating settings to register an undo snapshot.
+    func registerUndo() {
+        guard let data = try? JSONEncoder().encode(settings) else { return }
+        undoManager.registerUndo(withTarget: self) { editor in
+            editor.registerUndo()
+            if let previous = try? JSONDecoder().decode(ClaudeSettings.self, from: data) {
+                editor.settings = previous
+                editor.markDirty()
+            }
+        }
+    }
+
+    /// Registers undo, applies the mutation, and marks dirty.
+    func mutate(_ block: (inout ClaudeSettings) -> Void) {
+        registerUndo()
+        block(&settings)
+        markDirty()
+    }
+
+    /// A Binding to settings that registers undo on each set.
+    var settingsBinding: Binding<ClaudeSettings> {
+        Binding(
+            get: { self.settings },
+            set: { newValue in self.mutate { $0 = newValue } }
+        )
     }
 
     private func scheduleSave() {
@@ -76,7 +102,6 @@ final class ConfigEditor {
             encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
             let data = try encoder.encode(settings)
 
-            // Ensure parent directory exists
             let dir = fileURL.deletingLastPathComponent()
             try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
 
@@ -92,7 +117,6 @@ final class ConfigEditor {
 
     // MARK: - Raw JSON
 
-    /// Generates pretty-printed JSON from the current settings model.
     func syncRawFromSettings() {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
@@ -103,13 +127,13 @@ final class ConfigEditor {
         }
     }
 
-    /// Parses rawJSON back into the settings model. Returns false if invalid.
     func syncSettingsFromRaw() -> Bool {
         guard let data = rawJSON.data(using: .utf8) else {
             rawJSONError = "Invalid text encoding"
             return false
         }
         do {
+            registerUndo()
             settings = try JSONDecoder().decode(ClaudeSettings.self, from: data)
             rawJSONError = nil
             markDirty()

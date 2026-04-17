@@ -34,10 +34,10 @@ Core `settings.json` viewer/editor.
 ### TODO — Phase 1 polish
 - [x] Toolbar save/reload buttons
 - [x] JSON raw editor tab (toggle between form and raw JSON)
-- [x] Keyboard shortcut (Cmd+S force save)
-- [ ] Validation (highlight invalid permission patterns, malformed hook configs)
+- [x] Keyboard shortcuts (Cmd+S save, Cmd+Z undo, Cmd+Shift+Z redo)
+- [x] Validation (permission rule syntax checking with warning icons)
+- [x] Undo/redo via UndoManager (snapshot-based, registered on each mutation)
 - [ ] Merged/effective config read-only view (show what Claude actually sees)
-- [ ] Undo/redo via UndoManager
 
 ## Phase 2: CLAUDE.md & Memory
 
