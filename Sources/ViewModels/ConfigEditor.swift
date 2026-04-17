@@ -7,6 +7,8 @@ final class ConfigEditor {
     var isDirty: Bool = false
     var loadError: String?
     var lastSaved: Date?
+    var rawJSON: String = ""
+    var rawJSONError: String?
 
     let scope: ConfigScope
     let fileURL: URL
@@ -85,6 +87,36 @@ final class ConfigEditor {
             loadError = nil
         } catch {
             loadError = "Save error: \(error.localizedDescription)"
+        }
+    }
+
+    // MARK: - Raw JSON
+
+    /// Generates pretty-printed JSON from the current settings model.
+    func syncRawFromSettings() {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        if let data = try? encoder.encode(settings),
+           let json = String(data: data, encoding: .utf8) {
+            rawJSON = json
+            rawJSONError = nil
+        }
+    }
+
+    /// Parses rawJSON back into the settings model. Returns false if invalid.
+    func syncSettingsFromRaw() -> Bool {
+        guard let data = rawJSON.data(using: .utf8) else {
+            rawJSONError = "Invalid text encoding"
+            return false
+        }
+        do {
+            settings = try JSONDecoder().decode(ClaudeSettings.self, from: data)
+            rawJSONError = nil
+            markDirty()
+            return true
+        } catch {
+            rawJSONError = error.localizedDescription
+            return false
         }
     }
 

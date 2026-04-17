@@ -32,12 +32,12 @@ Core `settings.json` viewer/editor.
 - [x] AnyCodableValue for dynamic JSON sections
 
 ### TODO — Phase 1 polish
-- [ ] Toolbar save/reload buttons
-- [ ] JSON raw editor tab (toggle between form and raw JSON)
+- [x] Toolbar save/reload buttons
+- [x] JSON raw editor tab (toggle between form and raw JSON)
+- [x] Keyboard shortcut (Cmd+S force save)
 - [ ] Validation (highlight invalid permission patterns, malformed hook configs)
 - [ ] Merged/effective config read-only view (show what Claude actually sees)
 - [ ] Undo/redo via UndoManager
-- [ ] Keyboard shortcuts (Cmd+S force save, Cmd+Z undo)
 
 ## Phase 2: CLAUDE.md & Memory
 

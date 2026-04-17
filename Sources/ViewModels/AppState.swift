@@ -4,6 +4,7 @@ import SwiftUI
 final class AppState {
     var selectedSection: ConfigSection = .general
     var selectedScope: ConfigScope = .user
+    var showRawJSON: Bool = false
     var configEditor: ConfigEditor
 
     init() {

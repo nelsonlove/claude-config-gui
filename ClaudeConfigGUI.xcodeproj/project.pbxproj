@@ -10,6 +10,7 @@
 		047F248B03C64F2E458C7278 /* OptionalControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE34C5F00325D3348CCF1CBE /* OptionalControls.swift */; };
 		0C446AE7C21D73687DC9E7F2 /* AdvancedSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F9A8AADAEA140CA6CB9246 /* AdvancedSettingsView.swift */; };
 		1B38341DEA45D71EC6F6DF19 /* PermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5D2E3EB31B9AED0B334214 /* PermissionsView.swift */; };
+		237C71DE7BCEAFE42587D8B9 /* RawJSONView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A669F90169F59C69185A7D37 /* RawJSONView.swift */; };
 		3ACEB32BA7D560036978AE43 /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE7363A3F6A695E94ADDC03 /* GeneralSettingsView.swift */; };
 		3AD25C1F14C7629F627E6462 /* ConfigEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631654C11B7203FEB90293F0 /* ConfigEditor.swift */; };
 		4494F5927BA471687AFA44B3 /* SandboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B605903FAB788DE11705FC64 /* SandboxView.swift */; };
@@ -36,6 +37,7 @@
 		8D9ABD085AA13E83AFCAD548 /* ClaudeConfigGUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClaudeConfigGUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FE7363A3F6A695E94ADDC03 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
 		99F51929C9D1C94B1097EBDE /* ConfigSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigSection.swift; sourceTree = "<group>"; };
+		A669F90169F59C69185A7D37 /* RawJSONView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawJSONView.swift; sourceTree = "<group>"; };
 		A9B52A5151CB12065DCCCDD4 /* ConfigScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigScope.swift; sourceTree = "<group>"; };
 		AF5D2E3EB31B9AED0B334214 /* PermissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsView.swift; sourceTree = "<group>"; };
 		B52474C4C9C0477B9F2F9B23 /* ClaudeConfigApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeConfigApp.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 				2C19847BDFFE198BF4E54EED /* HooksView.swift */,
 				AF5D2E3EB31B9AED0B334214 /* PermissionsView.swift */,
 				D2FCAE92FC89D1E9C44E0177 /* PluginsView.swift */,
+				A669F90169F59C69185A7D37 /* RawJSONView.swift */,
 				B605903FAB788DE11705FC64 /* SandboxView.swift */,
 			);
 			path = Detail;
@@ -217,6 +220,7 @@
 				047F248B03C64F2E458C7278 /* OptionalControls.swift in Sources */,
 				1B38341DEA45D71EC6F6DF19 /* PermissionsView.swift in Sources */,
 				660DA2DB200BD55740F62C20 /* PluginsView.swift in Sources */,
+				237C71DE7BCEAFE42587D8B9 /* RawJSONView.swift in Sources */,
 				4494F5927BA471687AFA44B3 /* SandboxView.swift in Sources */,
 				E1E5DDB046F2FC5187A95B21 /* SidebarView.swift in Sources */,
 			);
