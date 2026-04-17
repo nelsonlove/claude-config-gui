@@ -1,5 +1,13 @@
 import SwiftUI
 
+struct MarketplaceInfo: Identifiable {
+    let id: String
+    let name: String
+    let sourceType: String
+    let sourceDetail: String
+    let inSettings: Bool  // true = from settings.json, false = from known_marketplaces.json only
+}
+
 struct PluginsView: View {
     @Environment(AppState.self) private var appState
 
@@ -58,34 +66,42 @@ struct PluginsView: View {
             } header: {
                 Text("Enabled Plugins (\(plugins.count))")
             } footer: {
-                Text("Plugins add skills, agents, hooks, and MCP servers. Format: plugin-name@marketplace-id. Toggle to enable/disable.")
+                Text("Plugins add skills, agents, hooks, and MCP servers. Format: plugin-name@marketplace-id.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
 
             Section {
-                let marketplaces = editor.settings.extraKnownMarketplaces ?? [:]
-                if marketplaces.isEmpty {
-                    Text("No extra marketplaces configured")
+                let allMarketplaces = loadAllMarketplaces()
+                if allMarketplaces.isEmpty {
+                    Text("No marketplaces found")
                         .foregroundStyle(.secondary)
                 } else {
-                    ForEach(marketplaces.sorted(by: { $0.key < $1.key }), id: \.key) { key, config in
+                    ForEach(allMarketplaces) { mp in
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(key)
-                                .font(.headline)
-                            if let source = config.source {
-                                HStack {
-                                    Text(source.source ?? "unknown")
-                                        .font(.caption)
-                                        .padding(.horizontal, 6)
-                                        .padding(.vertical, 2)
-                                        .background(.quaternary)
-                                        .clipShape(RoundedRectangle(cornerRadius: 4))
-                                    if let repo = source.repo {
-                                        Text(repo)
-                                            .font(.system(.caption, design: .monospaced))
-                                            .foregroundStyle(.secondary)
-                                    }
+                            HStack {
+                                Text(mp.name)
+                                    .font(.headline)
+                                if !mp.inSettings {
+                                    Text("auto")
+                                        .font(.caption2)
+                                        .padding(.horizontal, 4)
+                                        .padding(.vertical, 1)
+                                        .background(.tint.opacity(0.15))
+                                        .clipShape(RoundedRectangle(cornerRadius: 3))
+                                }
+                            }
+                            HStack {
+                                Text(mp.sourceType)
+                                    .font(.caption)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(.quaternary)
+                                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                                if !mp.sourceDetail.isEmpty {
+                                    Text(mp.sourceDetail)
+                                        .font(.system(.caption, design: .monospaced))
+                                        .foregroundStyle(.secondary)
                                 }
                             }
                         }
@@ -95,12 +111,58 @@ struct PluginsView: View {
             } header: {
                 Text("Marketplaces")
             } footer: {
-                Text("Plugin registries that Claude Code checks for available plugins. Sources can be GitHub repos, npm packages, or local directories.")
+                Text("Plugin registries. \"auto\" marketplaces come from known_marketplaces.json.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)
         .padding()
+    }
+
+    /// Merges marketplaces from settings.json and known_marketplaces.json.
+    private func loadAllMarketplaces() -> [MarketplaceInfo] {
+        var results: [String: MarketplaceInfo] = [:]
+
+        // From settings.json
+        for (name, config) in editor.settings.extraKnownMarketplaces ?? [:] {
+            let src = config.source
+            results[name] = MarketplaceInfo(
+                id: name,
+                name: name,
+                sourceType: src?.source ?? "unknown",
+                sourceDetail: src?.repo ?? src?.url ?? src?.package ?? "",
+                inSettings: true
+            )
+        }
+
+        // From known_marketplaces.json
+        let home = FileManager.default.homeDirectoryForCurrentUser
+        let kmPath = home.appendingPathComponent(".claude/plugins/known_marketplaces.json")
+        if let data = try? Data(contentsOf: kmPath),
+           let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+            for name in dict.keys where results[name] == nil {
+                // Parse source info from the known marketplace entry
+                var sourceType = "unknown"
+                var sourceDetail = ""
+                if let entry = dict[name] as? [String: Any],
+                   let source = entry["source"] as? [String: Any] {
+                    sourceType = source["source"] as? String ?? "unknown"
+                    sourceDetail = source["repo"] as? String
+                        ?? source["url"] as? String
+                        ?? source["package"] as? String
+                        ?? ""
+                }
+                results[name] = MarketplaceInfo(
+                    id: name,
+                    name: name,
+                    sourceType: sourceType,
+                    sourceDetail: sourceDetail,
+                    inSettings: false
+                )
+            }
+        }
+
+        return results.values.sorted { $0.name < $1.name }
     }
 }
