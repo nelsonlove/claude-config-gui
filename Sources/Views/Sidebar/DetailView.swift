@@ -9,27 +9,27 @@ struct DetailView: View {
             if appState.showRawJSON && section.group == .settings {
                 RawJSONView()
             } else {
-                ScrollView {
-                    switch section {
-                    case .general:
-                        GeneralSettingsView()
-                    case .permissions:
-                        PermissionsView()
-                    case .hooks:
-                        HooksView()
-                    case .plugins:
-                        PluginsView()
-                    case .sandbox:
-                        SandboxView()
-                    case .advanced:
-                        AdvancedSettingsView()
-                    case .claudeMd:
-                        ClaudeMdView()
-                    case .memory:
-                        MemoryBrowserView()
-                    case .mcpServers:
-                        MCPServersView()
-                    }
+                switch section {
+                // Settings panels use Form which needs ScrollView
+                case .general:
+                    ScrollView { GeneralSettingsView() }
+                case .permissions:
+                    ScrollView { PermissionsView() }
+                case .hooks:
+                    ScrollView { HooksView() }
+                case .plugins:
+                    ScrollView { PluginsView() }
+                case .sandbox:
+                    ScrollView { SandboxView() }
+                case .advanced:
+                    ScrollView { AdvancedSettingsView() }
+                // These manage their own scrolling (List, TextEditor)
+                case .claudeMd:
+                    ClaudeMdView()
+                case .memory:
+                    MemoryBrowserView()
+                case .mcpServers:
+                    MCPServersView()
                 }
             }
         }
