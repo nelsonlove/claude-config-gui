@@ -3,6 +3,8 @@ import SwiftUI
 @Observable
 final class ConfigEditor {
     var settings: ClaudeSettings
+    /// Merged settings from parent scopes (read-only). Used to show inherited values.
+    var inherited: ClaudeSettings?
     var isDirty: Bool = false
     var loadError: String?
     var lastSaved: Date?
@@ -11,6 +13,7 @@ final class ConfigEditor {
 
     let scope: ConfigScope
     let fileURL: URL
+    let projectRoot: URL?
     let undoManager = UndoManager()
 
     private var saveTask: Task<Void, Never>?
@@ -20,6 +23,7 @@ final class ConfigEditor {
 
     init(scope: ConfigScope, projectRoot: URL? = nil) {
         self.scope = scope
+        self.projectRoot = projectRoot
         self.fileURL = scope.fileURL(projectRoot: projectRoot)
         self.settings = ClaudeSettings()
     }
@@ -37,6 +41,7 @@ final class ConfigEditor {
             isDirty = false
             loadError = nil
             undoManager.removeAllActions()
+            loadInherited()
             startWatching()
         } catch let error as DecodingError {
             loadError = "Parse error: \(error.localizedDescription)"
@@ -113,6 +118,63 @@ final class ConfigEditor {
         } catch {
             loadError = "Save error: \(error.localizedDescription)"
         }
+    }
+
+    // MARK: - Inherited settings
+
+    /// Load parent scope settings for ghost value display.
+    /// Precedence: Local overrides Project overrides User.
+    private func loadInherited() {
+        var parentURLs: [URL] = []
+        let home = FileManager.default.homeDirectoryForCurrentUser
+        let userURL = home.appendingPathComponent(".claude/settings.json")
+
+        switch scope {
+        case .user:
+            inherited = nil
+            return
+        case .project:
+            parentURLs = [userURL]
+        case .local:
+            let projectURL = ConfigScope.project.fileURL(projectRoot: projectRoot)
+            parentURLs = [userURL, projectURL]
+        }
+
+        // Merge parent scopes: later entries override earlier ones for scalar fields
+        var merged = ClaudeSettings()
+        for url in parentURLs {
+            guard let data = try? Data(contentsOf: url),
+                  let layer = try? JSONDecoder().decode(ClaudeSettings.self, from: data) else { continue }
+            merged = mergeSettings(base: merged, overlay: layer)
+        }
+        inherited = merged
+    }
+
+    /// Shallow merge: overlay's non-nil values replace base.
+    /// For arrays (permissions), concatenates.
+    private func mergeSettings(base: ClaudeSettings, overlay: ClaudeSettings) -> ClaudeSettings {
+        // Encode both, merge as dictionaries, decode back
+        guard let baseData = try? JSONEncoder().encode(base),
+              let overlayData = try? JSONEncoder().encode(overlay),
+              var baseDict = try? JSONSerialization.jsonObject(with: baseData) as? [String: Any],
+              let overlayDict = try? JSONSerialization.jsonObject(with: overlayData) as? [String: Any] else {
+            return overlay
+        }
+
+        for (key, value) in overlayDict {
+            if let baseArray = baseDict[key] as? [Any], let overlayArray = value as? [Any] {
+                // Arrays: concatenate (like Claude Code does for permissions.allow etc.)
+                baseDict[key] = baseArray + overlayArray
+            } else {
+                baseDict[key] = value
+            }
+        }
+
+        guard let mergedData = try? JSONSerialization.data(withJSONObject: baseDict),
+              let merged = try? JSONDecoder().decode(ClaudeSettings.self, from: mergedData) else {
+            return overlay
+        }
+        return merged
     }
 
     // MARK: - Raw JSON

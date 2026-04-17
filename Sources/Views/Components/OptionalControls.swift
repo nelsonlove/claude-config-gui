@@ -27,55 +27,81 @@ extension View {
 // MARK: - OptionalToggle
 
 /// A toggle that supports optional Bool bindings.
-/// Shows a tri-state: unset (dimmed), on, off.
+/// Shows inherited value from parent scope when unset.
 struct OptionalToggle: View {
     let label: String
     @Binding var isOn: Bool?
+    var inheritedValue: Bool?
 
-    init(_ label: String, isOn: Binding<Bool?>) {
+    init(_ label: String, isOn: Binding<Bool?>, inherited: Bool? = nil) {
         self.label = label
         self._isOn = isOn
+        self.inheritedValue = inherited
     }
 
     var body: some View {
         HStack {
             Toggle(label, isOn: Binding(
-                get: { isOn ?? false },
+                get: { isOn ?? inheritedValue ?? false },
                 set: { newValue in
-                    // Checking sets true; unchecking clears to nil (unset/default).
-                    // Use the raw JSON editor to set an explicit false if needed.
                     isOn = newValue ? true : nil
                 }
             ))
             .toggleStyle(.checkbox)
 
+            if isOn == nil, let iv = inheritedValue, iv {
+                Text("inherited")
+                    .font(.caption2)
+                    .foregroundStyle(.tint)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 1)
+                    .background(.tint.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 3))
+            }
+
             if isOn != nil {
                 resetButton { isOn = nil }
             }
         }
-        .opacity(isOn == nil ? 0.6 : 1)
+        .opacity(isOn == nil && inheritedValue == nil ? 0.6 : 1)
     }
 }
 
 // MARK: - OptionalPicker
 
-/// A picker that wraps an optional binding, showing a "Default" option for nil.
+/// A picker that wraps an optional binding, showing inherited or "Default" for nil.
 struct OptionalPicker<Value: Hashable, Content: View>: View {
     let label: String
     @Binding var selection: Value?
+    var inheritedValue: Value?
     @ViewBuilder let content: () -> Content
 
-    init(_ label: String, selection: Binding<Value?>, @ViewBuilder content: @escaping () -> Content) {
+    init(_ label: String, selection: Binding<Value?>, inherited: Value? = nil, @ViewBuilder content: @escaping () -> Content) {
         self.label = label
         self._selection = selection
+        self.inheritedValue = inherited
         self.content = content
     }
 
     var body: some View {
         HStack {
             Picker(label, selection: $selection) {
-                Text("Default").tag(nil as Value?)
+                if let iv = inheritedValue {
+                    Text("Inherited").tag(nil as Value?)
+                } else {
+                    Text("Default").tag(nil as Value?)
+                }
                 content()
+            }
+
+            if selection == nil, inheritedValue != nil {
+                Text("inherited")
+                    .font(.caption2)
+                    .foregroundStyle(.tint)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 1)
+                    .background(.tint.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 3))
             }
 
             if selection != nil {
