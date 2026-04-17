@@ -90,15 +90,23 @@ struct SessionHistory {
         .sorted { $0.lastTimestamp > $1.lastTimestamp }
     }
 
-    /// Load messages from a session's JSONL file.
+    /// Load messages from a session's JSONL file, falling back to history.jsonl.
     static func loadMessages(sessionId: String) -> [SessionMessage] {
+        // Try full transcript first
+        if let messages = loadFromTranscript(sessionId: sessionId), !messages.isEmpty {
+            return messages
+        }
+        // Fallback: reconstruct from history.jsonl (user messages only)
+        return loadFromHistory(sessionId: sessionId)
+    }
+
+    static func loadFromTranscript(sessionId: String) -> [SessionMessage]? {
         let home = FileManager.default.homeDirectoryForCurrentUser
         let projectsDir = home.appendingPathComponent(".claude/projects")
         let fm = FileManager.default
 
-        // Search all project directories for this session's JSONL
         guard let projects = try? fm.contentsOfDirectory(at: projectsDir, includingPropertiesForKeys: nil)
-        else { return [] }
+        else { return nil }
 
         for projectDir in projects {
             let sessionFile = projectDir.appendingPathComponent("\(sessionId).jsonl")
@@ -106,7 +114,35 @@ struct SessionHistory {
                 return parseSessionFile(sessionFile)
             }
         }
-        return []
+        return nil
+    }
+
+    /// Reconstruct conversation from history.jsonl (display text only, user messages).
+    private static func loadFromHistory(sessionId: String) -> [SessionMessage] {
+        let home = FileManager.default.homeDirectoryForCurrentUser
+        let historyURL = home.appendingPathComponent(".claude/history.jsonl")
+        guard let content = try? String(contentsOf: historyURL, encoding: .utf8) else { return [] }
+
+        var messages: [SessionMessage] = []
+        for line in content.components(separatedBy: "\n") where !line.isEmpty {
+            guard let data = line.data(using: .utf8),
+                  let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  dict["sessionId"] as? String == sessionId else { continue }
+
+            let display = dict["display"] as? String ?? ""
+            let ts = (dict["timestamp"] as? Double).map { Date(timeIntervalSince1970: $0 / 1000) }
+
+            if display.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { continue }
+
+            messages.append(SessionMessage(
+                id: UUID().uuidString,
+                type: .user,
+                text: display,
+                toolCalls: [],
+                timestamp: ts
+            ))
+        }
+        return messages
     }
 
     private static func parseSessionFile(_ url: URL) -> [SessionMessage] {

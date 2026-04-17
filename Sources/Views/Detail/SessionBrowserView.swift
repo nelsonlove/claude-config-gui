@@ -4,6 +4,7 @@ struct SessionBrowserView: View {
     @State private var sessions: [SessionEntry] = []
     @State private var selectedSession: SessionEntry?
     @State private var messages: [SessionMessage] = []
+    @State private var isHistoryFallback = false
     @State private var isLoading = true
     @State private var searchText = ""
 
@@ -96,9 +97,23 @@ struct SessionBrowserView: View {
                         ContentUnavailableView(
                             "No Transcript",
                             systemImage: "text.bubble",
-                            description: Text("Session transcript not found on disk.")
+                            description: Text("Session transcript has been cleaned up.")
                         )
                     } else {
+                        if isHistoryFallback {
+                            HStack(spacing: 6) {
+                                Image(systemName: "info.circle")
+                                    .foregroundStyle(.secondary)
+                                Text("Full transcript cleaned up — showing user prompts from history")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                Spacer()
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 6)
+                            .background(.quaternary.opacity(0.5))
+                        }
+
                         ScrollView {
                             LazyVStack(alignment: .leading, spacing: 12) {
                                 ForEach(messages) { msg in
@@ -121,9 +136,17 @@ struct SessionBrowserView: View {
         .onAppear { reload() }
         .onChange(of: selectedSession) { _, session in
             if let session {
-                messages = SessionHistory.loadMessages(sessionId: session.sessionId)
+                let transcript = SessionHistory.loadFromTranscript(sessionId: session.sessionId)
+                if let transcript, !transcript.isEmpty {
+                    messages = transcript
+                    isHistoryFallback = false
+                } else {
+                    messages = SessionHistory.loadMessages(sessionId: session.sessionId)
+                    isHistoryFallback = !messages.isEmpty
+                }
             } else {
                 messages = []
+                isHistoryFallback = false
             }
         }
     }
