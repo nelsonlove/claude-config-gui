@@ -9,15 +9,13 @@ final class MCPConfigEditor {
     var isDirty = false
     var loadError: String?
 
-    let scope: MCPConfigScope
     let fileURL: URL
 
     private var saveTask: Task<Void, Never>?
     private var rawJSON: [String: Any] = [:]  // preserve unknown keys
 
-    init(scope: MCPConfigScope) {
-        self.scope = scope
-        self.fileURL = scope.fileURL()
+    init(url: URL) {
+        self.fileURL = url
     }
 
     func load() {

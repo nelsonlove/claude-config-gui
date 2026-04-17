@@ -1,33 +1,27 @@
 import SwiftUI
 
 struct MCPServersView: View {
-    @State private var editor = MCPConfigEditor(scope: .user)
-    @State private var selectedScope: MCPConfigScope = .user
+    @Environment(AppState.self) private var appState
+    @State private var editor: MCPConfigEditor?
     @State private var editingServer: MCPServer?
     @State private var newServerName = ""
     @State private var pluginServers: [PluginMCPServer] = []
 
+    private var mcpURL: URL {
+        appState.selectedScope.mcpURL()
+    }
+
     var body: some View {
         VStack(spacing: 0) {
-            // Scope picker
+            // Header
             HStack {
-                Picker(selection: $selectedScope) {
-                    ForEach(MCPConfigScope.allCases) { scope in
-                        Text(scope.label).tag(scope)
-                    }
-                } label: {
-                    EmptyView()
-                }
-                .pickerStyle(.segmented)
-                .frame(width: 280)
-
+                Text("MCP Servers")
+                    .font(.headline)
                 Spacer()
-
-                Text(shortenPath(editor.fileURL.path))
+                Text(appState.selectedScope.mcpDescription)
                     .font(.caption)
                     .foregroundStyle(.secondary)
-
-                if editor.isDirty {
+                if editor?.isDirty == true {
                     Image(systemName: "pencil.circle.fill")
                         .foregroundStyle(.orange)
                         .font(.caption)
@@ -38,7 +32,7 @@ struct MCPServersView: View {
 
             Divider()
 
-            if let error = editor.loadError {
+            if let error = editor?.loadError {
                 HStack {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundStyle(.red)
@@ -54,7 +48,7 @@ struct MCPServersView: View {
 
             if let editing = editingServer {
                 MCPServerEditorView(server: editing) { saved in
-                    editor.updateServer(saved)
+                    editor?.updateServer(saved)
                     editingServer = nil
                 } onCancel: {
                     editingServer = nil
@@ -62,20 +56,21 @@ struct MCPServersView: View {
             } else {
                 Form {
                     Section {
-                        if editor.servers.isEmpty {
+                        let servers = editor?.servers ?? []
+                        if servers.isEmpty {
                             ContentUnavailableView(
                                 "No MCP Servers",
                                 systemImage: "server.rack",
                                 description: Text("Add a server to connect Claude to external tools.")
                             )
                         } else {
-                            ForEach(Array(editor.servers.enumerated()), id: \.element.name) { index, server in
+                            ForEach(Array(servers.enumerated()), id: \.element.name) { index, server in
                                 MCPServerRow(server: server)
                                     .contextMenu {
                                         Button("Edit") { editingServer = server }
                                         Divider()
                                         Button("Delete", role: .destructive) {
-                                            editor.removeServer(at: index)
+                                            editor?.removeServer(at: index)
                                         }
                                     }
                                     .onTapGesture(count: 2) {
@@ -84,7 +79,7 @@ struct MCPServersView: View {
                             }
                         }
                     } header: {
-                        Text("Servers (\(editor.servers.count))")
+                        Text("Servers (\(editor?.servers.count ?? 0))")
                     } footer: {
                         Text("MCP servers provide Claude with tools for databases, APIs, browsers, and other external services. Double-click to edit.")
                             .font(.subheadline)
@@ -138,31 +133,24 @@ struct MCPServersView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear {
-            editor.load()
-            pluginServers = PluginMCPServer.scanAll()
-        }
-        .onChange(of: selectedScope) { _, newScope in
-            if editor.isDirty { editor.save() }
-            editor = MCPConfigEditor(scope: newScope)
-            editor.load()
-        }
+        .onAppear { loadForCurrentScope() }
+        .onChange(of: appState.selectedScope) { _, _ in loadForCurrentScope() }
+    }
+
+    private func loadForCurrentScope() {
+        editor?.save()
+        let newEditor = MCPConfigEditor(url: mcpURL)
+        newEditor.load()
+        editor = newEditor
+        pluginServers = PluginMCPServer.scanAll()
     }
 
     private func addServer() {
         let name = newServerName.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return }
-        editor.addServer(name: name)
+        editor?.addServer(name: name)
         newServerName = ""
-        // Open editor for the new server
-        editingServer = editor.servers.first { $0.name == name }
-    }
-
-    private func shortenPath(_ path: String) -> String {
-        path.replacingOccurrences(
-            of: FileManager.default.homeDirectoryForCurrentUser.path,
-            with: "~"
-        )
+        editingServer = editor?.servers.first { $0.name == name }
     }
 }
 

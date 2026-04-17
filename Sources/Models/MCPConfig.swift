@@ -135,39 +135,4 @@ struct PluginMCPServer: Identifiable {
     }
 }
 
-enum MCPConfigScope: String, CaseIterable, Identifiable {
-    case user
-    case project
-    case desktop
-
-    var id: Self { self }
-
-    var label: String {
-        switch self {
-        case .user: "User"
-        case .project: "Project"
-        case .desktop: "Desktop"
-        }
-    }
-
-    var description: String {
-        switch self {
-        case .user: "~/.claude.json"
-        case .project: ".mcp.json"
-        case .desktop: "claude_desktop_config.json"
-        }
-    }
-
-    func fileURL(projectRoot: URL? = nil) -> URL {
-        let home = FileManager.default.homeDirectoryForCurrentUser
-        switch self {
-        case .user:
-            return home.appendingPathComponent(".claude.json")
-        case .project:
-            let root = projectRoot ?? URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-            return root.appendingPathComponent(".mcp.json")
-        case .desktop:
-            return home.appendingPathComponent(".claude/claude_desktop_config.json")
-        }
-    }
-}
+// MCPConfigScope removed — ConfigScope now handles all file URL routing.
