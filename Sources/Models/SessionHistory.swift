@@ -142,8 +142,10 @@ struct SessionHistory {
                 }
             }
 
-            // Skip empty assistant messages (just tool calls with no text)
-            if type == "assistant" && text.isEmpty && tools.isEmpty { continue }
+            // Skip messages with no visible content
+            if text.isEmpty && tools.isEmpty { continue }
+            // Skip empty user messages (tool result acknowledgments)
+            if type == "user" && text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { continue }
 
             messages.append(SessionMessage(
                 id: uuid,
