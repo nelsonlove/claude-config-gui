@@ -64,7 +64,7 @@ struct HooksView: View {
                 Text("Add Hook")
             } footer: {
                 Text("Hooks run shell commands, HTTP requests, prompts, or agents in response to Claude Code lifecycle events. Evaluation order: deny > ask > allow.")
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
         }

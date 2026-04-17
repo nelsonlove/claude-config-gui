@@ -5,12 +5,12 @@ struct ClaudeConfigApp: App {
     @State private var appState = AppState()
 
     var body: some Scene {
-        WindowGroup {
+        Window("Claude Config", id: "main") {
             ContentView()
                 .environment(appState)
-                .frame(minWidth: 720, minHeight: 480)
+                .frame(minWidth: 600, minHeight: 400)
         }
-        .windowStyle(.titleBar)
-        .defaultSize(width: 900, height: 600)
+        .defaultSize(width: 780, height: 540)
+        .windowResizability(.contentMinSize)
     }
 }

@@ -11,8 +11,8 @@ struct DescribedModifier: ViewModifier {
         VStack(alignment: .leading, spacing: 3) {
             content
             Text(text)
-                .font(.caption)
-                .foregroundStyle(.tertiary)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
@@ -43,6 +43,7 @@ struct OptionalToggle: View {
                 get: { isOn ?? false },
                 set: { isOn = $0 }
             ))
+            .toggleStyle(.checkbox)
 
             if isOn != nil {
                 resetButton { isOn = nil }

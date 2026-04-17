@@ -20,7 +20,7 @@ struct SidebarView: View {
             .padding(.vertical, 2)
         }
         .listStyle(.sidebar)
-        .navigationSplitViewColumnWidth(min: 200, ideal: 220)
+        .navigationSplitViewColumnWidth(min: 180, ideal: 200, max: 240)
         .safeAreaInset(edge: .top) {
             scopePicker
         }

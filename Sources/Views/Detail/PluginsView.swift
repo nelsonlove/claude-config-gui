@@ -57,7 +57,7 @@ struct PluginsView: View {
                 Text("Enabled Plugins (\(plugins.count))")
             } footer: {
                 Text("Plugins add skills, agents, hooks, and MCP servers. Format: plugin-name@marketplace-id. Toggle to enable/disable.")
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
 
@@ -94,7 +94,7 @@ struct PluginsView: View {
                 Text("Marketplaces")
             } footer: {
                 Text("Plugin registries that Claude Code checks for available plugins. Sources can be GitHub repos, npm packages, or local directories.")
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
         }

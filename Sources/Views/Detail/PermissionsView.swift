@@ -122,7 +122,7 @@ struct PermissionRulesList: View {
         } footer: {
             if let help {
                 Text(help)
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
         }
@@ -184,7 +184,7 @@ struct StringListEditor: View {
         } footer: {
             if let help {
                 Text(help)
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
         }
