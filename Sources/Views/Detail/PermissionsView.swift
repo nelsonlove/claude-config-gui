@@ -24,12 +24,12 @@ struct PermissionsView: View {
                         Text(mode.label).tag(Optional(mode))
                     }
                 }
-                .help("Default: prompt for each tool. Accept Edits: auto-approve file edits. Bypass: skip all prompts (dangerous). Auto: AI decides based on rules. Plan: read-only, suggest but don't execute.")
+                .described("Default: prompt each tool. Accept Edits: auto-approve file changes. Bypass: skip all prompts. Auto: AI decides. Plan: read-only.")
             }
 
             PermissionRulesList(
                 title: "Allow Rules",
-                help: "Tools matching these patterns are auto-approved without prompting. Evaluated after deny rules.",
+                help: "Auto-approved without prompting. Evaluated after deny rules. Syntax: Tool or Tool(specifier), e.g. Bash(npm run *)",
                 rules: Binding(
                     get: { permissions.wrappedValue.allow ?? [] },
                     set: { permissions.wrappedValue.allow = $0.isEmpty ? nil : $0 }
@@ -38,7 +38,7 @@ struct PermissionsView: View {
 
             PermissionRulesList(
                 title: "Deny Rules",
-                help: "Tools matching these patterns are always blocked. Deny rules take highest priority.",
+                help: "Always blocked. Takes highest priority — evaluated before allow and ask.",
                 rules: Binding(
                     get: { permissions.wrappedValue.deny ?? [] },
                     set: { permissions.wrappedValue.deny = $0.isEmpty ? nil : $0 }
@@ -47,7 +47,7 @@ struct PermissionsView: View {
 
             PermissionRulesList(
                 title: "Ask Rules",
-                help: "Tools matching these patterns always prompt for confirmation, even in auto mode.",
+                help: "Always prompts for confirmation, even in auto mode.",
                 rules: Binding(
                     get: { permissions.wrappedValue.ask ?? [] },
                     set: { permissions.wrappedValue.ask = $0.isEmpty ? nil : $0 }
@@ -56,7 +56,7 @@ struct PermissionsView: View {
 
             StringListEditor(
                 title: "Additional Directories",
-                help: "Extra directories Claude can access beyond the project root. Paths are relative to the project.",
+                help: "Extra directories Claude can access beyond the project root.",
                 items: Binding(
                     get: { permissions.wrappedValue.additionalDirectories ?? [] },
                     set: { permissions.wrappedValue.additionalDirectories = $0.isEmpty ? nil : $0 }

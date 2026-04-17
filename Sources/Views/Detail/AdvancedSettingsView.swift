@@ -18,9 +18,9 @@ struct AdvancedSettingsView: View {
                         Text(s.rawValue).tag(Optional(s))
                     }
                 }
-                .help("Shell used for ! prefix commands. Bash on macOS/Linux, PowerShell on Windows.")
+                .described("Shell for ! prefix commands. Bash on macOS/Linux.")
                 OptionalToggle("Include Git Instructions", isOn: settings.includeGitInstructions)
-                    .help("Includes git workflow guidance in Claude's system prompt. Disable if you manage git yourself.")
+                    .described("Adds git workflow guidance to the system prompt. Disable if you manage git yourself.")
             }
 
             Section("Attribution") {
@@ -29,9 +29,9 @@ struct AdvancedSettingsView: View {
                     set: { settings.wrappedValue.attribution = $0 }
                 )
                 TextField("Commit Message", text: optionalString(attribution.commit))
-                    .help("Custom attribution text for git commits")
+                    .described("Custom text appended to git commit messages.")
                 TextField("PR Description", text: optionalString(attribution.pr))
-                    .help("Custom attribution text for pull requests")
+                    .described("Custom text appended to pull request descriptions.")
             }
 
             Section("Status Line") {
@@ -41,7 +41,7 @@ struct AdvancedSettingsView: View {
                 )
                 TextField("Command", text: optionalString(statusLine.command))
                     .font(.system(.body, design: .monospaced))
-                    .help("Shell command that outputs the status line text")
+                    .described("Shell command whose stdout becomes the status line text.")
             }
 
             Section("Environment Variables") {
@@ -78,29 +78,29 @@ struct AdvancedSettingsView: View {
 
             Section("Authentication") {
                 TextField("API Key Helper", text: optionalString(settings.apiKeyHelper))
-                    .help("Path to script that outputs API authentication values")
+                    .described("Path to a script that outputs API authentication values.")
 
                 OptionalPicker("Force Login Method", selection: settings.forceLoginMethod) {
                     ForEach(LoginMethod.allCases) { m in
                         Text(m.rawValue).tag(Optional(m))
                     }
                 }
-                .help("\"claudeai\" uses claude.ai OAuth; \"console\" uses Anthropic Console API keys.")
+                .described("claudeai: OAuth via claude.ai. console: Anthropic Console API keys.")
 
                 TextField("Force Login Org UUID", text: optionalString(settings.forceLoginOrgUUID))
-                    .help("Lock login to a specific organization. Used with SSO/enterprise setups.")
+                    .described("Lock login to a specific organization for SSO/enterprise setups.")
             }
 
             Section("MCP") {
                 OptionalToggle("Auto-approve Project MCP Servers", isOn: settings.enableAllProjectMcpServers)
-                    .help("Automatically approve all MCP servers defined in project .mcp.json files without prompting.")
+                    .described("Skip the approval prompt for MCP servers defined in project .mcp.json files.")
             }
 
             Section("Dangerous") {
                 OptionalToggle("Skip Bypass-Mode Prompt", isOn: settings.skipDangerousModePermissionPrompt)
-                    .help("Skips the confirmation dialog when entering bypass permissions mode. Use with caution.")
+                    .described("Skips the confirmation when entering bypass permissions mode.")
                 OptionalToggle("Disable All Hooks", isOn: settings.disableAllHooks)
-                    .help("Completely disables all hooks and the status line. Useful for debugging hook issues.")
+                    .described("Completely disables all hooks and the status line. Useful for debugging.")
             }
         }
         .formStyle(.grouped)

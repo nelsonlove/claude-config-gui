@@ -1,5 +1,31 @@
 import SwiftUI
 
+// MARK: - Inline description modifier
+
+/// Adds a small description line below any control.
+/// More reliable and discoverable than `.help()` hover tooltips on macOS.
+struct DescribedModifier: ViewModifier {
+    let text: String
+
+    func body(content: Content) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            content
+            Text(text)
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+}
+
+extension View {
+    func described(_ text: String) -> some View {
+        modifier(DescribedModifier(text: text))
+    }
+}
+
+// MARK: - OptionalToggle
+
 /// A toggle that supports optional Bool bindings.
 /// Shows a tri-state: unset (dimmed), on, off.
 struct OptionalToggle: View {
@@ -19,20 +45,14 @@ struct OptionalToggle: View {
             ))
 
             if isOn != nil {
-                Button {
-                    isOn = nil
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.secondary)
-                        .font(.caption)
-                }
-                .buttonStyle(.plain)
-                .help("Reset to default")
+                resetButton { isOn = nil }
             }
         }
         .opacity(isOn == nil ? 0.6 : 1)
     }
 }
+
+// MARK: - OptionalPicker
 
 /// A picker that wraps an optional binding, showing a "Default" option for nil.
 struct OptionalPicker<Value: Hashable, Content: View>: View {
@@ -54,22 +74,15 @@ struct OptionalPicker<Value: Hashable, Content: View>: View {
             }
 
             if selection != nil {
-                Button {
-                    selection = nil
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.secondary)
-                        .font(.caption)
-                }
-                .buttonStyle(.plain)
-                .help("Reset to default")
+                resetButton { selection = nil }
             }
         }
     }
 }
 
+// MARK: - OptionalStepper
+
 /// A stepper for optional Int bindings, with inline text field and unit label.
-/// Dimmed when nil (unset), with a reset button to clear back to default.
 struct OptionalStepper: View {
     let label: String
     @Binding var value: Int?
@@ -110,17 +123,21 @@ struct OptionalStepper: View {
             }
 
             if value != nil {
-                Button {
-                    value = nil
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.secondary)
-                        .font(.caption)
-                }
-                .buttonStyle(.plain)
-                .help("Reset to default")
+                resetButton { value = nil }
             }
         }
         .opacity(value == nil ? 0.6 : 1)
     }
+}
+
+// MARK: - Shared reset button
+
+private func resetButton(action: @escaping () -> Void) -> some View {
+    Button(action: action) {
+        Image(systemName: "xmark.circle.fill")
+            .foregroundStyle(.secondary)
+            .font(.caption)
+    }
+    .buttonStyle(.plain)
+    .help("Reset to default")
 }

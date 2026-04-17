@@ -176,9 +176,9 @@ struct HookHandlerRow: View {
                 }
 
                 LabeledTextField("If (matcher)", text: binding(\.if))
-                    .help("Permission-rule-style filter (e.g. \"Bash(git *)\"). Only runs this handler when the tool matches.")
+                    .described("Permission-rule filter, e.g. Bash(git *). Only runs when the tool matches.")
                 LabeledTextField("Status Message", text: binding(\.statusMessage))
-                    .help("Text shown in the spinner while this hook is running.")
+                    .described("Text shown in the spinner while this hook runs.")
 
                 HStack(spacing: 16) {
                     if let timeout = handler.timeout {
