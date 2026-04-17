@@ -9,6 +9,7 @@ enum ConfigSection: String, CaseIterable, Identifiable {
     case advanced
     case claudeMd
     case memory
+    case mcpServers
 
     var id: Self { self }
 
@@ -22,6 +23,7 @@ enum ConfigSection: String, CaseIterable, Identifiable {
         case .advanced: "Advanced"
         case .claudeMd: "CLAUDE.md"
         case .memory: "Memory"
+        case .mcpServers: "MCP Servers"
         }
     }
 
@@ -35,6 +37,7 @@ enum ConfigSection: String, CaseIterable, Identifiable {
         case .advanced: "wrench.and.screwdriver"
         case .claudeMd: "doc.text"
         case .memory: "brain.head.profile"
+        case .mcpServers: "server.rack"
         }
     }
 
@@ -48,6 +51,7 @@ enum ConfigSection: String, CaseIterable, Identifiable {
         case .advanced: "Environment, attribution, and shell settings"
         case .claudeMd: "Global and project conventions"
         case .memory: "Persistent memory across sessions"
+        case .mcpServers: "External tool integrations"
         }
     }
 
@@ -58,11 +62,14 @@ enum ConfigSection: String, CaseIterable, Identifiable {
             return .settings
         case .claudeMd, .memory:
             return .knowledge
+        case .mcpServers:
+            return .integrations
         }
     }
 
     enum SectionGroup: String, CaseIterable {
         case settings = "Settings"
         case knowledge = "Knowledge"
+        case integrations = "Integrations"
     }
 }

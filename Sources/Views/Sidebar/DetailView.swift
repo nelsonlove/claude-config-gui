@@ -27,6 +27,8 @@ struct DetailView: View {
                         ClaudeMdView()
                     case .memory:
                         MemoryBrowserView()
+                    case .mcpServers:
+                        MCPServersView()
                     }
                 }
             }

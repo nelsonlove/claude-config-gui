@@ -49,12 +49,15 @@ Core `settings.json` viewer/editor.
 - [ ] Create new memory file
 - [ ] MEMORY.md index viewer
 
-## Phase 3: MCP Servers
+## Phase 3: MCP Servers (current)
 
-- [ ] Visual editor for `~/.claude.json` (user MCP config)
-- [ ] Visual editor for `.mcp.json` (project MCP config)
-- [ ] Transport type picker (stdio / sse / http / ws + IDE variants)
-- [ ] Command + args + env builder for stdio servers
+- [x] Visual editor for `~/.claude.json` (user MCP config)
+- [x] Visual editor for `.mcp.json` (project MCP config)
+- [x] Visual editor for `claude_desktop_config.json` (desktop/IDE config)
+- [x] Transport type picker (stdio / sse / http / ws)
+- [x] Command + args + env builder for stdio servers
+- [x] Add/remove servers with inline name entry
+- [x] Context menu edit/delete on each server row
 - [ ] Server approval status from settings.json (`enabledMcpjsonServers` / `disabledMcpjsonServers`)
 - [ ] Test connection button (launch server, check for handshake)
 
