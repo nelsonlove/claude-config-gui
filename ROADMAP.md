@@ -39,13 +39,15 @@ Core `settings.json` viewer/editor.
 - [x] Undo/redo via UndoManager (snapshot-based, registered on each mutation)
 - [ ] Merged/effective config read-only view (show what Claude actually sees)
 
-## Phase 2: CLAUDE.md & Memory
+## Phase 2: CLAUDE.md & Memory (current)
 
-- [ ] Markdown editor for `~/.claude/CLAUDE.md` and project `.claude/CLAUDE.md`
-- [ ] Memory browser: list/view/edit/delete files in `projects/*/memory/`
-- [ ] Memory frontmatter editor (name, description, type fields)
-- [ ] Project picker (enumerate `~/.claude/projects/*/`)
+- [x] Markdown editor for `~/.claude/CLAUDE.md` and project `.claude/CLAUDE.md`
+- [x] Memory browser: list/view/edit/delete files in `projects/*/memory/`
+- [x] Memory frontmatter editor (name, description, type fields)
+- [x] Project scanner (enumerate all `~/.claude/projects/*/` with memory dirs)
 - [ ] Split-pane preview (edit left, rendered markdown right)
+- [ ] Create new memory file
+- [ ] MEMORY.md index viewer
 
 ## Phase 3: MCP Servers
 

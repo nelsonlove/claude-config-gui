@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		047F248B03C64F2E458C7278 /* OptionalControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE34C5F00325D3348CCF1CBE /* OptionalControls.swift */; };
+		09B71999DC9295636239DBB0 /* MemoryBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EC07620633172990EC203D /* MemoryBrowserView.swift */; };
 		0C446AE7C21D73687DC9E7F2 /* AdvancedSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F9A8AADAEA140CA6CB9246 /* AdvancedSettingsView.swift */; };
 		1B38341DEA45D71EC6F6DF19 /* PermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5D2E3EB31B9AED0B334214 /* PermissionsView.swift */; };
 		237C71DE7BCEAFE42587D8B9 /* RawJSONView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A669F90169F59C69185A7D37 /* RawJSONView.swift */; };
@@ -15,7 +16,10 @@
 		3AD25C1F14C7629F627E6462 /* ConfigEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631654C11B7203FEB90293F0 /* ConfigEditor.swift */; };
 		4494F5927BA471687AFA44B3 /* SandboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B605903FAB788DE11705FC64 /* SandboxView.swift */; };
 		49C2610595D859E63F710B93 /* ClaudeSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64274441B52DC284F6D8D7D7 /* ClaudeSettings.swift */; };
+		4BEFC208646FD2EBF475DB81 /* MemoryEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7D811AAD0F340F6F108269 /* MemoryEntry.swift */; };
+		5FC427B1164F5FA640C3C072 /* MarkdownFileEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CDC710349425E55324627C /* MarkdownFileEditor.swift */; };
 		660DA2DB200BD55740F62C20 /* PluginsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2FCAE92FC89D1E9C44E0177 /* PluginsView.swift */; };
+		6A2842493AB2AB314BD491AB /* ClaudeMdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B30486FB81B42D82CDF18F /* ClaudeMdView.swift */; };
 		7C3BB9410C6AE33F1198B721 /* ConfigScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B52A5151CB12065DCCCDD4 /* ConfigScope.swift */; };
 		812507A6F498F4DAA8890F64 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 774B1767ECDF9B0AE3C6A2B7 /* ContentView.swift */; };
 		947215A20F171BCCE77D8BD8 /* HooksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C19847BDFFE198BF4E54EED /* HooksView.swift */; };
@@ -28,7 +32,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		25CDC710349425E55324627C /* MarkdownFileEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownFileEditor.swift; sourceTree = "<group>"; };
 		2C19847BDFFE198BF4E54EED /* HooksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HooksView.swift; sourceTree = "<group>"; };
+		4F7D811AAD0F340F6F108269 /* MemoryEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryEntry.swift; sourceTree = "<group>"; };
+		59B30486FB81B42D82CDF18F /* ClaudeMdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeMdView.swift; sourceTree = "<group>"; };
 		631654C11B7203FEB90293F0 /* ConfigEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigEditor.swift; sourceTree = "<group>"; };
 		64274441B52DC284F6D8D7D7 /* ClaudeSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeSettings.swift; sourceTree = "<group>"; };
 		72B344180C2158D92FECB26A /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -40,6 +47,7 @@
 		A669F90169F59C69185A7D37 /* RawJSONView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawJSONView.swift; sourceTree = "<group>"; };
 		A9B52A5151CB12065DCCCDD4 /* ConfigScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigScope.swift; sourceTree = "<group>"; };
 		AF5D2E3EB31B9AED0B334214 /* PermissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsView.swift; sourceTree = "<group>"; };
+		B3EC07620633172990EC203D /* MemoryBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryBrowserView.swift; sourceTree = "<group>"; };
 		B52474C4C9C0477B9F2F9B23 /* ClaudeConfigApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeConfigApp.swift; sourceTree = "<group>"; };
 		B605903FAB788DE11705FC64 /* SandboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxView.swift; sourceTree = "<group>"; };
 		D2FCAE92FC89D1E9C44E0177 /* PluginsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginsView.swift; sourceTree = "<group>"; };
@@ -64,6 +72,7 @@
 			children = (
 				72B344180C2158D92FECB26A /* AppState.swift */,
 				631654C11B7203FEB90293F0 /* ConfigEditor.swift */,
+				25CDC710349425E55324627C /* MarkdownFileEditor.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -80,8 +89,10 @@
 			isa = PBXGroup;
 			children = (
 				E0F9A8AADAEA140CA6CB9246 /* AdvancedSettingsView.swift */,
+				59B30486FB81B42D82CDF18F /* ClaudeMdView.swift */,
 				8FE7363A3F6A695E94ADDC03 /* GeneralSettingsView.swift */,
 				2C19847BDFFE198BF4E54EED /* HooksView.swift */,
+				B3EC07620633172990EC203D /* MemoryBrowserView.swift */,
 				AF5D2E3EB31B9AED0B334214 /* PermissionsView.swift */,
 				D2FCAE92FC89D1E9C44E0177 /* PluginsView.swift */,
 				A669F90169F59C69185A7D37 /* RawJSONView.swift */,
@@ -115,6 +126,7 @@
 				64274441B52DC284F6D8D7D7 /* ClaudeSettings.swift */,
 				A9B52A5151CB12065DCCCDD4 /* ConfigScope.swift */,
 				99F51929C9D1C94B1097EBDE /* ConfigSection.swift */,
+				4F7D811AAD0F340F6F108269 /* MemoryEntry.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -209,6 +221,7 @@
 				B972B8C6AB2943F7063A536E /* AnyCodableValue.swift in Sources */,
 				ECD253B3F7C2A488A8362896 /* AppState.swift in Sources */,
 				A8043DD70D15B66C3D686CC2 /* ClaudeConfigApp.swift in Sources */,
+				6A2842493AB2AB314BD491AB /* ClaudeMdView.swift in Sources */,
 				49C2610595D859E63F710B93 /* ClaudeSettings.swift in Sources */,
 				3AD25C1F14C7629F627E6462 /* ConfigEditor.swift in Sources */,
 				7C3BB9410C6AE33F1198B721 /* ConfigScope.swift in Sources */,
@@ -217,6 +230,9 @@
 				C38B15616C2A05594DDDEF10 /* DetailView.swift in Sources */,
 				3ACEB32BA7D560036978AE43 /* GeneralSettingsView.swift in Sources */,
 				947215A20F171BCCE77D8BD8 /* HooksView.swift in Sources */,
+				5FC427B1164F5FA640C3C072 /* MarkdownFileEditor.swift in Sources */,
+				09B71999DC9295636239DBB0 /* MemoryBrowserView.swift in Sources */,
+				4BEFC208646FD2EBF475DB81 /* MemoryEntry.swift in Sources */,
 				047F248B03C64F2E458C7278 /* OptionalControls.swift in Sources */,
 				1B38341DEA45D71EC6F6DF19 /* PermissionsView.swift in Sources */,
 				660DA2DB200BD55740F62C20 /* PluginsView.swift in Sources */,

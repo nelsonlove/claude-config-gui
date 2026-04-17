@@ -5,19 +5,26 @@ struct SidebarView: View {
     @Environment(AppState.self) private var appState
 
     var body: some View {
-        List(ConfigSection.allCases, selection: $selection) { section in
-            Label {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(section.title)
-                    Text(section.description)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+        List(selection: $selection) {
+            ForEach(ConfigSection.SectionGroup.allCases, id: \.self) { group in
+                Section(group.rawValue) {
+                    ForEach(ConfigSection.allCases.filter { $0.group == group }) { section in
+                        Label {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(section.title)
+                                Text(section.description)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        } icon: {
+                            Image(systemName: section.icon)
+                                .foregroundStyle(.tint)
+                        }
+                        .tag(section)
+                        .padding(.vertical, 2)
+                    }
                 }
-            } icon: {
-                Image(systemName: section.icon)
-                    .foregroundStyle(.tint)
             }
-            .padding(.vertical, 2)
         }
         .listStyle(.sidebar)
         .navigationSplitViewColumnWidth(min: 180, ideal: 200, max: 240)

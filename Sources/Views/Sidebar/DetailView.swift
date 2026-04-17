@@ -6,7 +6,7 @@ struct DetailView: View {
 
     var body: some View {
         Group {
-            if appState.showRawJSON {
+            if appState.showRawJSON && section.group == .settings {
                 RawJSONView()
             } else {
                 ScrollView {
@@ -23,6 +23,10 @@ struct DetailView: View {
                         SandboxView()
                     case .advanced:
                         AdvancedSettingsView()
+                    case .claudeMd:
+                        ClaudeMdView()
+                    case .memory:
+                        MemoryBrowserView()
                     }
                 }
             }
