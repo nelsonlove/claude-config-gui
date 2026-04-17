@@ -10,6 +10,7 @@ enum ConfigSection: String, CaseIterable, Identifiable {
     case claudeMd
     case memory
     case mcpServers
+    case sessions
     case analytics
     case diskUsage
 
@@ -26,6 +27,7 @@ enum ConfigSection: String, CaseIterable, Identifiable {
         case .claudeMd: "CLAUDE.md"
         case .memory: "Memory"
         case .mcpServers: "MCP Servers"
+        case .sessions: "Sessions"
         case .analytics: "Analytics"
         case .diskUsage: "Disk Usage"
         }
@@ -42,6 +44,7 @@ enum ConfigSection: String, CaseIterable, Identifiable {
         case .claudeMd: "doc.text"
         case .memory: "brain.head.profile"
         case .mcpServers: "server.rack"
+        case .sessions: "bubble.left.and.bubble.right"
         case .analytics: "chart.bar"
         case .diskUsage: "internaldrive"
         }
@@ -58,6 +61,7 @@ enum ConfigSection: String, CaseIterable, Identifiable {
         case .claudeMd: "Global and project conventions"
         case .memory: "Persistent memory across sessions"
         case .mcpServers: "External tool integrations"
+        case .sessions: "Browse and search past sessions"
         case .analytics: "Session stats and usage trends"
         case .diskUsage: "Storage breakdown of ~/.claude"
         }
@@ -72,7 +76,7 @@ enum ConfigSection: String, CaseIterable, Identifiable {
             return .knowledge
         case .mcpServers:
             return .integrations
-        case .analytics, .diskUsage:
+        case .sessions, .analytics, .diskUsage:
             return .system
         }
     }

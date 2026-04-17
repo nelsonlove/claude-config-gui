@@ -11,7 +11,9 @@
 		09B71999DC9295636239DBB0 /* MemoryBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EC07620633172990EC203D /* MemoryBrowserView.swift */; };
 		0C446AE7C21D73687DC9E7F2 /* AdvancedSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F9A8AADAEA140CA6CB9246 /* AdvancedSettingsView.swift */; };
 		1B38341DEA45D71EC6F6DF19 /* PermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5D2E3EB31B9AED0B334214 /* PermissionsView.swift */; };
+		22746358C62548BD2BCDBC85 /* SessionBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E23D1C20409E39042B3322A /* SessionBrowserView.swift */; };
 		237C71DE7BCEAFE42587D8B9 /* RawJSONView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A669F90169F59C69185A7D37 /* RawJSONView.swift */; };
+		29183AFECAEF04F7690B7500 /* SessionHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634910EF660D06D5E832B1EE /* SessionHistory.swift */; };
 		3ACEB32BA7D560036978AE43 /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE7363A3F6A695E94ADDC03 /* GeneralSettingsView.swift */; };
 		3AD25C1F14C7629F627E6462 /* ConfigEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631654C11B7203FEB90293F0 /* ConfigEditor.swift */; };
 		4494F5927BA471687AFA44B3 /* SandboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B605903FAB788DE11705FC64 /* SandboxView.swift */; };
@@ -42,10 +44,12 @@
 		1877C375C902E05A52D82A18 /* MCPServersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCPServersView.swift; sourceTree = "<group>"; };
 		25CDC710349425E55324627C /* MarkdownFileEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownFileEditor.swift; sourceTree = "<group>"; };
 		2C19847BDFFE198BF4E54EED /* HooksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HooksView.swift; sourceTree = "<group>"; };
+		3E23D1C20409E39042B3322A /* SessionBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionBrowserView.swift; sourceTree = "<group>"; };
 		46DB955C876F288DBBA69E73 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4F7D811AAD0F340F6F108269 /* MemoryEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryEntry.swift; sourceTree = "<group>"; };
 		59B30486FB81B42D82CDF18F /* ClaudeMdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeMdView.swift; sourceTree = "<group>"; };
 		631654C11B7203FEB90293F0 /* ConfigEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigEditor.swift; sourceTree = "<group>"; };
+		634910EF660D06D5E832B1EE /* SessionHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionHistory.swift; sourceTree = "<group>"; };
 		64274441B52DC284F6D8D7D7 /* ClaudeSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeSettings.swift; sourceTree = "<group>"; };
 		72B344180C2158D92FECB26A /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		774B1767ECDF9B0AE3C6A2B7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -116,6 +120,7 @@
 				D2FCAE92FC89D1E9C44E0177 /* PluginsView.swift */,
 				A669F90169F59C69185A7D37 /* RawJSONView.swift */,
 				B605903FAB788DE11705FC64 /* SandboxView.swift */,
+				3E23D1C20409E39042B3322A /* SessionBrowserView.swift */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
@@ -147,6 +152,7 @@
 				99F51929C9D1C94B1097EBDE /* ConfigSection.swift */,
 				A751FA052BE0731913030CDA /* MCPConfig.swift */,
 				4F7D811AAD0F340F6F108269 /* MemoryEntry.swift */,
+				634910EF660D06D5E832B1EE /* SessionHistory.swift */,
 				AD44C114429D72F19CEA3719 /* SessionStats.swift */,
 			);
 			path = Models;
@@ -276,6 +282,8 @@
 				660DA2DB200BD55740F62C20 /* PluginsView.swift in Sources */,
 				237C71DE7BCEAFE42587D8B9 /* RawJSONView.swift in Sources */,
 				4494F5927BA471687AFA44B3 /* SandboxView.swift in Sources */,
+				22746358C62548BD2BCDBC85 /* SessionBrowserView.swift in Sources */,
+				29183AFECAEF04F7690B7500 /* SessionHistory.swift in Sources */,
 				DB9C222A2B6FD0825C652313 /* SessionStats.swift in Sources */,
 				E1E5DDB046F2FC5187A95B21 /* SidebarView.swift in Sources */,
 			);
