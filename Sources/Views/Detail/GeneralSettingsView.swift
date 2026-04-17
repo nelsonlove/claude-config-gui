@@ -82,14 +82,12 @@ struct GeneralSettingsView: View {
             }
 
             Section("Session") {
-                HStack {
-                    Text("Cleanup Period")
-                    Spacer()
-                    TextField("Days", value: settings.cleanupPeriodDays, format: .number)
-                        .frame(width: 60)
-                    Text("days")
-                        .foregroundStyle(.secondary)
-                }
+                OptionalStepper(
+                    "Cleanup Period",
+                    value: settings.cleanupPeriodDays,
+                    range: 0...365,
+                    unit: "days"
+                )
                 .help("Number of days to retain session transcripts. Default is 30. Set to 0 to disable persistence entirely.")
 
                 OptionalToggle("Auto Memory", isOn: settings.autoMemoryEnabled)

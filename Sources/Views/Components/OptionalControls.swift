@@ -67,3 +67,60 @@ struct OptionalPicker<Value: Hashable, Content: View>: View {
         }
     }
 }
+
+/// A stepper for optional Int bindings, with inline text field and unit label.
+/// Dimmed when nil (unset), with a reset button to clear back to default.
+struct OptionalStepper: View {
+    let label: String
+    @Binding var value: Int?
+    let range: ClosedRange<Int>
+    let unit: String
+
+    init(_ label: String, value: Binding<Int?>, range: ClosedRange<Int>, unit: String = "") {
+        self.label = label
+        self._value = value
+        self.range = range
+        self.unit = unit
+    }
+
+    var body: some View {
+        HStack {
+            Text(label)
+
+            Spacer()
+
+            Stepper(value: Binding(
+                get: { value ?? range.lowerBound },
+                set: { value = $0 }
+            ), in: range) {
+                HStack(spacing: 4) {
+                    TextField("", value: Binding(
+                        get: { value ?? range.lowerBound },
+                        set: { value = $0 }
+                    ), format: .number)
+                    .frame(width: 48)
+                    .multilineTextAlignment(.trailing)
+                    .textFieldStyle(.roundedBorder)
+
+                    if !unit.isEmpty {
+                        Text(unit)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+
+            if value != nil {
+                Button {
+                    value = nil
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.secondary)
+                        .font(.caption)
+                }
+                .buttonStyle(.plain)
+                .help("Reset to default")
+            }
+        }
+        .opacity(value == nil ? 0.6 : 1)
+    }
+}
