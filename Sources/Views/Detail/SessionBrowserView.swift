@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SessionBrowserView: View {
+    @Environment(AppState.self) private var appState
     @State private var sessions: [SessionEntry] = []
     @State private var selectedSession: SessionEntry?
     @State private var messages: [SessionMessage] = []
@@ -10,12 +11,23 @@ struct SessionBrowserView: View {
     @State private var showDeleteConfirm = false
 
     private var filteredSessions: [SessionEntry] {
-        if searchText.isEmpty { return sessions }
-        let q = searchText.lowercased()
-        return sessions.filter {
-            $0.firstPrompt.lowercased().contains(q) ||
-            $0.displayProject.lowercased().contains(q)
+        var result = sessions
+
+        // Filter by project when a project is selected
+        if appState.selectedScope != .user, let projectRoot = appState.selectedProjectRoot {
+            let projectPath = projectRoot.path
+            result = result.filter { $0.project == projectPath }
         }
+
+        if !searchText.isEmpty {
+            let q = searchText.lowercased()
+            result = result.filter {
+                $0.firstPrompt.lowercased().contains(q) ||
+                $0.displayProject.lowercased().contains(q)
+            }
+        }
+
+        return result
     }
 
     var body: some View {
@@ -23,7 +35,8 @@ struct SessionBrowserView: View {
             // Session list
             VStack(spacing: 0) {
                 HStack {
-                    Text("Sessions (\(sessions.count))")
+                    let isFiltered = appState.selectedScope != .user && appState.selectedProjectRoot != nil
+                    Text("Sessions (\(filteredSessions.count)\(isFiltered ? " of \(sessions.count)" : ""))")
                         .font(.headline)
                     Spacer()
                     Button {
