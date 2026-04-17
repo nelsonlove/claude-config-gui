@@ -10,6 +10,8 @@ enum ConfigSection: String, CaseIterable, Identifiable {
     case claudeMd
     case memory
     case mcpServers
+    case analytics
+    case diskUsage
 
     var id: Self { self }
 
@@ -24,6 +26,8 @@ enum ConfigSection: String, CaseIterable, Identifiable {
         case .claudeMd: "CLAUDE.md"
         case .memory: "Memory"
         case .mcpServers: "MCP Servers"
+        case .analytics: "Analytics"
+        case .diskUsage: "Disk Usage"
         }
     }
 
@@ -38,6 +42,8 @@ enum ConfigSection: String, CaseIterable, Identifiable {
         case .claudeMd: "doc.text"
         case .memory: "brain.head.profile"
         case .mcpServers: "server.rack"
+        case .analytics: "chart.bar"
+        case .diskUsage: "internaldrive"
         }
     }
 
@@ -52,6 +58,8 @@ enum ConfigSection: String, CaseIterable, Identifiable {
         case .claudeMd: "Global and project conventions"
         case .memory: "Persistent memory across sessions"
         case .mcpServers: "External tool integrations"
+        case .analytics: "Session stats and usage trends"
+        case .diskUsage: "Storage breakdown of ~/.claude"
         }
     }
 
@@ -64,6 +72,8 @@ enum ConfigSection: String, CaseIterable, Identifiable {
             return .knowledge
         case .mcpServers:
             return .integrations
+        case .analytics, .diskUsage:
+            return .system
         }
     }
 
@@ -71,5 +81,6 @@ enum ConfigSection: String, CaseIterable, Identifiable {
         case settings = "Settings"
         case knowledge = "Knowledge"
         case integrations = "Integrations"
+        case system = "System"
     }
 }

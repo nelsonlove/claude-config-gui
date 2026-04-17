@@ -63,22 +63,24 @@ Core `settings.json` viewer/editor.
 
 ## Phase 4: Analytics & Housekeeping
 
-- [ ] Session stats dashboard (read `usage-data/facets/*.json` and `session-meta/*.json`)
+- [x] Session stats dashboard (read `usage-data/facets/*.json` and `session-meta/*.json`)
   - Token usage over time
-  - Tool usage breakdown
-  - Session duration and satisfaction trends
+  - Tool usage bar chart
+  - Language tags
+  - Recent sessions list with first prompt, duration, tokens
+- [x] Disk usage breakdown with bar chart per directory
 - [ ] Session history browser (`history.jsonl`)
 - [ ] File history viewer (`file-history/`)
-- [ ] Debug log browser and cleanup
+- [ ] Debug log cleanup actions
 - [ ] Session pruning (honor `cleanupPeriodDays`)
-- [ ] Disk usage summary
 
 ## Phase 5: Polish & Distribution
 
+- [x] App icon (dark charcoal with orange `{ }` braces + gear)
+- [x] Asset catalog with all macOS icon sizes (16–1024px)
 - [ ] Full file watching with FSEvents for directory tree changes
 - [ ] Backup before destructive edits (automatic `.bak` or timestamped copies)
 - [ ] Export/import settings bundles (share configs between machines)
-- [ ] App icon and branding
 - [ ] Sparkle integration for auto-updates (or manual update check)
 - [ ] Developer ID code signing
 - [ ] Notarization for Gatekeeper-friendly distribution

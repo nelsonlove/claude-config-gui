@@ -30,6 +30,10 @@ struct DetailView: View {
                     MemoryBrowserView()
                 case .mcpServers:
                     MCPServersView()
+                case .analytics:
+                    AnalyticsView()
+                case .diskUsage:
+                    DiskUsageView()
                 }
             }
         }
