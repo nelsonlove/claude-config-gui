@@ -80,6 +80,61 @@ enum TransportType: String, CaseIterable, Identifiable {
     }
 }
 
+/// A read-only MCP server discovered from an installed plugin's .mcp.json.
+struct PluginMCPServer: Identifiable {
+    let id: String
+    let serverName: String
+    let pluginName: String
+    let marketplace: String
+
+    static func scanAll() -> [PluginMCPServer] {
+        let home = FileManager.default.homeDirectoryForCurrentUser
+        let cacheDir = home.appendingPathComponent(".claude/plugins/cache")
+        let fm = FileManager.default
+        var results: [PluginMCPServer] = []
+        var seen = Set<String>()
+
+        guard let marketplaces = try? fm.contentsOfDirectory(at: cacheDir, includingPropertiesForKeys: nil) else {
+            return []
+        }
+
+        for mpDir in marketplaces {
+            let mpName = mpDir.lastPathComponent
+            // Skip temp directories
+            guard !mpName.hasPrefix("temp_") else { continue }
+
+            guard let plugins = try? fm.contentsOfDirectory(at: mpDir, includingPropertiesForKeys: nil) else { continue }
+
+            for pluginDir in plugins {
+                // Find the latest version directory
+                guard let versions = try? fm.contentsOfDirectory(at: pluginDir, includingPropertiesForKeys: nil) else { continue }
+
+                for versionDir in versions {
+                    let mcpJSON = versionDir.appendingPathComponent(".mcp.json")
+                    guard fm.fileExists(atPath: mcpJSON.path),
+                          let data = try? Data(contentsOf: mcpJSON),
+                          let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                          let servers = dict["mcpServers"] as? [String: Any] else { continue }
+
+                    for serverName in servers.keys {
+                        let key = "\(serverName)@\(pluginDir.lastPathComponent)"
+                        guard !seen.contains(key) else { continue }
+                        seen.insert(key)
+                        results.append(PluginMCPServer(
+                            id: key,
+                            serverName: serverName,
+                            pluginName: pluginDir.lastPathComponent,
+                            marketplace: mpName
+                        ))
+                    }
+                }
+            }
+        }
+
+        return results.sorted { $0.serverName < $1.serverName }
+    }
+}
+
 enum MCPConfigScope: String, CaseIterable, Identifiable {
     case user
     case project

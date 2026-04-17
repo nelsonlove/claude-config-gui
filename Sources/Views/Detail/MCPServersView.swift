@@ -5,7 +5,7 @@ struct MCPServersView: View {
     @State private var selectedScope: MCPConfigScope = .user
     @State private var editingServer: MCPServer?
     @State private var newServerName = ""
-    @State private var showingAddSheet = false
+    @State private var pluginServers: [PluginMCPServer] = []
 
     var body: some View {
         VStack(spacing: 0) {
@@ -100,6 +100,39 @@ struct MCPServersView: View {
                                 .disabled(newServerName.isEmpty)
                         }
                     }
+
+                    if !pluginServers.isEmpty {
+                        Section {
+                            ForEach(pluginServers) { ps in
+                                HStack(spacing: 10) {
+                                    Image(systemName: "puzzlepiece.extension")
+                                        .foregroundStyle(.tint)
+                                        .frame(width: 20)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(ps.serverName)
+                                            .font(.system(.body, design: .monospaced))
+                                        Text(ps.pluginName)
+                                            .font(.subheadline)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    Spacer()
+                                    Text("plugin")
+                                        .font(.caption)
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 2)
+                                        .background(.quaternary)
+                                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                                }
+                                .padding(.vertical, 2)
+                            }
+                        } header: {
+                            Text("Plugin Servers (\(pluginServers.count))")
+                        } footer: {
+                            Text("These servers are provided by installed plugins and managed automatically.")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                 }
                 .formStyle(.grouped)
             }
@@ -107,6 +140,7 @@ struct MCPServersView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
             editor.load()
+            pluginServers = PluginMCPServer.scanAll()
         }
         .onChange(of: selectedScope) { _, newScope in
             if editor.isDirty { editor.save() }
