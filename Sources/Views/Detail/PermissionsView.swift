@@ -24,26 +24,39 @@ struct PermissionsView: View {
                         Text(mode.label).tag(Optional(mode))
                     }
                 }
-                .help("Controls how Claude asks for tool permissions")
+                .help("Default: prompt for each tool. Accept Edits: auto-approve file edits. Bypass: skip all prompts (dangerous). Auto: AI decides based on rules. Plan: read-only, suggest but don't execute.")
             }
 
-            PermissionRulesList(title: "Allow Rules", rules: Binding(
-                get: { permissions.wrappedValue.allow ?? [] },
-                set: { permissions.wrappedValue.allow = $0.isEmpty ? nil : $0 }
-            ))
+            PermissionRulesList(
+                title: "Allow Rules",
+                help: "Tools matching these patterns are auto-approved without prompting. Evaluated after deny rules.",
+                rules: Binding(
+                    get: { permissions.wrappedValue.allow ?? [] },
+                    set: { permissions.wrappedValue.allow = $0.isEmpty ? nil : $0 }
+                )
+            )
 
-            PermissionRulesList(title: "Deny Rules", rules: Binding(
-                get: { permissions.wrappedValue.deny ?? [] },
-                set: { permissions.wrappedValue.deny = $0.isEmpty ? nil : $0 }
-            ))
+            PermissionRulesList(
+                title: "Deny Rules",
+                help: "Tools matching these patterns are always blocked. Deny rules take highest priority.",
+                rules: Binding(
+                    get: { permissions.wrappedValue.deny ?? [] },
+                    set: { permissions.wrappedValue.deny = $0.isEmpty ? nil : $0 }
+                )
+            )
 
-            PermissionRulesList(title: "Ask Rules", rules: Binding(
-                get: { permissions.wrappedValue.ask ?? [] },
-                set: { permissions.wrappedValue.ask = $0.isEmpty ? nil : $0 }
-            ))
+            PermissionRulesList(
+                title: "Ask Rules",
+                help: "Tools matching these patterns always prompt for confirmation, even in auto mode.",
+                rules: Binding(
+                    get: { permissions.wrappedValue.ask ?? [] },
+                    set: { permissions.wrappedValue.ask = $0.isEmpty ? nil : $0 }
+                )
+            )
 
             StringListEditor(
                 title: "Additional Directories",
+                help: "Extra directories Claude can access beyond the project root. Paths are relative to the project.",
                 items: Binding(
                     get: { permissions.wrappedValue.additionalDirectories ?? [] },
                     set: { permissions.wrappedValue.additionalDirectories = $0.isEmpty ? nil : $0 }
@@ -60,11 +73,12 @@ struct PermissionsView: View {
 
 struct PermissionRulesList: View {
     let title: String
+    var help: String? = nil
     @Binding var rules: [String]
     @State private var newRule = ""
 
     var body: some View {
-        Section(title) {
+        Section {
             ForEach(Array(rules.enumerated()), id: \.offset) { index, rule in
                 HStack {
                     Image(systemName: ruleIcon(for: rule))
@@ -103,6 +117,14 @@ struct PermissionRulesList: View {
                     .foregroundStyle(.secondary)
                     .font(.caption)
             }
+        } header: {
+            Text(title)
+        } footer: {
+            if let help {
+                Text(help)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 
@@ -128,12 +150,13 @@ struct PermissionRulesList: View {
 
 struct StringListEditor: View {
     let title: String
+    var help: String? = nil
     @Binding var items: [String]
     var placeholder: String = ""
     @State private var newItem = ""
 
     var body: some View {
-        Section(title) {
+        Section {
             ForEach(Array(items.enumerated()), id: \.offset) { index, item in
                 HStack {
                     Text(item)
@@ -155,6 +178,14 @@ struct StringListEditor: View {
                     .onSubmit { addItem() }
                 Button("Add") { addItem() }
                     .disabled(newItem.isEmpty)
+            }
+        } header: {
+            Text(title)
+        } footer: {
+            if let help {
+                Text(help)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
     }

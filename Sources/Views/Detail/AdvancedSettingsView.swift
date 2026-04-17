@@ -18,7 +18,9 @@ struct AdvancedSettingsView: View {
                         Text(s.rawValue).tag(Optional(s))
                     }
                 }
+                .help("Shell used for ! prefix commands. Bash on macOS/Linux, PowerShell on Windows.")
                 OptionalToggle("Include Git Instructions", isOn: settings.includeGitInstructions)
+                    .help("Includes git workflow guidance in Claude's system prompt. Disable if you manage git yourself.")
             }
 
             Section("Attribution") {
@@ -83,17 +85,22 @@ struct AdvancedSettingsView: View {
                         Text(m.rawValue).tag(Optional(m))
                     }
                 }
+                .help("\"claudeai\" uses claude.ai OAuth; \"console\" uses Anthropic Console API keys.")
 
                 TextField("Force Login Org UUID", text: optionalString(settings.forceLoginOrgUUID))
+                    .help("Lock login to a specific organization. Used with SSO/enterprise setups.")
             }
 
             Section("MCP") {
                 OptionalToggle("Auto-approve Project MCP Servers", isOn: settings.enableAllProjectMcpServers)
+                    .help("Automatically approve all MCP servers defined in project .mcp.json files without prompting.")
             }
 
             Section("Dangerous") {
                 OptionalToggle("Skip Bypass-Mode Prompt", isOn: settings.skipDangerousModePermissionPrompt)
+                    .help("Skips the confirmation dialog when entering bypass permissions mode. Use with caution.")
                 OptionalToggle("Disable All Hooks", isOn: settings.disableAllHooks)
+                    .help("Completely disables all hooks and the status line. Useful for debugging hook issues.")
             }
         }
         .formStyle(.grouped)

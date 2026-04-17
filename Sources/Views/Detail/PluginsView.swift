@@ -10,7 +10,7 @@ struct PluginsView: View {
         let sortedPlugins = plugins.sorted(by: { $0.key < $1.key })
 
         Form {
-            Section("Enabled Plugins (\(plugins.count))") {
+            Section {
                 if sortedPlugins.isEmpty {
                     Text("No plugins configured in this scope")
                         .foregroundStyle(.secondary)
@@ -53,9 +53,15 @@ struct PluginsView: View {
                         }
                     }
                 }
+            } header: {
+                Text("Enabled Plugins (\(plugins.count))")
+            } footer: {
+                Text("Plugins add skills, agents, hooks, and MCP servers. Format: plugin-name@marketplace-id. Toggle to enable/disable.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
-            Section("Marketplaces") {
+            Section {
                 let marketplaces = editor.settings.extraKnownMarketplaces ?? [:]
                 if marketplaces.isEmpty {
                     Text("No extra marketplaces configured")
@@ -84,6 +90,12 @@ struct PluginsView: View {
                         .padding(.vertical, 2)
                     }
                 }
+            } header: {
+                Text("Marketplaces")
+            } footer: {
+                Text("Plugin registries that Claude Code checks for available plugins. Sources can be GitHub repos, npm packages, or local directories.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)

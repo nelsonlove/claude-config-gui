@@ -14,9 +14,13 @@ struct SandboxView: View {
         Form {
             Section("General") {
                 OptionalToggle("Sandbox Enabled", isOn: sandbox.enabled)
+                    .help("Restricts Claude's filesystem and network access to prevent unintended side effects.")
                 OptionalToggle("Fail if Unavailable", isOn: sandbox.failIfUnavailable)
+                    .help("If the sandbox runtime isn't available, fail rather than running unsandboxed.")
                 OptionalToggle("Auto-allow Bash if Sandboxed", isOn: sandbox.autoAllowBashIfSandboxed)
+                    .help("Automatically approve all Bash commands when the sandbox is active, since they're contained.")
                 OptionalToggle("Allow Unsandboxed Commands", isOn: sandbox.allowUnsandboxedCommands)
+                    .help("Permits certain commands to run outside the sandbox (e.g. docker, system tools).")
             }
 
             Section("Filesystem") {
@@ -58,7 +62,9 @@ struct SandboxView: View {
                 ), placeholder: "github.com")
 
                 OptionalToggle("Allow All Unix Sockets", isOn: net.allowAllUnixSockets)
+                    .help("Permits connections to any Unix domain socket (e.g. Docker, database sockets).")
                 OptionalToggle("Allow Local Binding", isOn: net.allowLocalBinding)
+                    .help("Allows processes to bind to localhost ports (needed for dev servers).")
             }
 
             Section("Excluded Commands") {

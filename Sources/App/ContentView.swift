@@ -12,5 +12,8 @@ struct ContentView: View {
             DetailView(section: appState.selectedSection)
         }
         .navigationSplitViewStyle(.balanced)
+        .onAppear {
+            appState.configEditor.load()
+        }
     }
 }

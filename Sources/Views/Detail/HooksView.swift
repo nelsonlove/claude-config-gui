@@ -51,7 +51,7 @@ struct HooksView: View {
                 )
             }
 
-            Section("Add Hook") {
+            Section {
                 Menu("Add Event Hook...") {
                     ForEach(unconfiguredEvents, id: \.self) { event in
                         Button(event) {
@@ -60,6 +60,12 @@ struct HooksView: View {
                     }
                 }
                 .disabled(unconfiguredEvents.isEmpty)
+            } header: {
+                Text("Add Hook")
+            } footer: {
+                Text("Hooks run shell commands, HTTP requests, prompts, or agents in response to Claude Code lifecycle events. Evaluation order: deny > ask > allow.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)
@@ -170,7 +176,9 @@ struct HookHandlerRow: View {
                 }
 
                 LabeledTextField("If (matcher)", text: binding(\.if))
+                    .help("Permission-rule-style filter (e.g. \"Bash(git *)\"). Only runs this handler when the tool matches.")
                 LabeledTextField("Status Message", text: binding(\.statusMessage))
+                    .help("Text shown in the spinner while this hook is running.")
 
                 HStack(spacing: 16) {
                     if let timeout = handler.timeout {
