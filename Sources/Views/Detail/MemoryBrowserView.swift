@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct MemoryBrowserView: View {
+    @Environment(AppState.self) private var appState
     @State private var projects: [ProjectMemory] = []
     @State private var selectedEntry: MemoryEntry?
     @State private var editingEntry: MemoryEntry?
+    @State private var showNewMemory = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -12,6 +14,14 @@ struct MemoryBrowserView: View {
                 Text("Memory Files")
                     .font(.headline)
                 Spacer()
+                Button {
+                    showNewMemory = true
+                } label: {
+                    Label("New", systemImage: "plus")
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+
                 Button {
                     projects = ProjectMemory.scanAll()
                 } label: {
@@ -25,7 +35,14 @@ struct MemoryBrowserView: View {
 
             Divider()
 
-            if projects.isEmpty {
+            if showNewMemory {
+                MemoryEditorView(entry: newMemoryEntry()) { saved in
+                    saveEntry(saved)
+                    showNewMemory = false
+                } onCancel: {
+                    showNewMemory = false
+                }
+            } else if projects.isEmpty && editingEntry == nil {
                 ContentUnavailableView(
                     "No Memory Files",
                     systemImage: "brain.head.profile",
@@ -70,6 +87,25 @@ struct MemoryBrowserView: View {
     }
 
     private func saveEntry(_ entry: MemoryEntry) {
+        var entry = entry
+        // For new files, derive filename from name field
+        if entry.fileURL.lastPathComponent == "new_memory.md" && !entry.name.isEmpty {
+            let sanitized = entry.name
+                .replacingOccurrences(of: " ", with: "_")
+                .replacingOccurrences(of: "/", with: "_")
+                .lowercased()
+            entry = MemoryEntry(
+                id: entry.fileURL.deletingLastPathComponent().appendingPathComponent("\(sanitized).md"),
+                fileURL: entry.fileURL.deletingLastPathComponent().appendingPathComponent("\(sanitized).md"),
+                projectPath: entry.projectPath,
+                name: entry.name,
+                description: entry.description,
+                type: entry.type,
+                body: entry.body
+            )
+        }
+        let dir = entry.fileURL.deletingLastPathComponent()
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         let content = entry.serialize()
         try? content.write(to: entry.fileURL, atomically: true, encoding: .utf8)
         projects = ProjectMemory.scanAll()
@@ -78,6 +114,36 @@ struct MemoryBrowserView: View {
     private func deleteEntry(_ entry: MemoryEntry) {
         try? FileManager.default.removeItem(at: entry.fileURL)
         projects = ProjectMemory.scanAll()
+    }
+
+    private func newMemoryEntry() -> MemoryEntry {
+        // Save to the global project memory dir by default,
+        // or to the selected project if one is chosen
+        let home = FileManager.default.homeDirectoryForCurrentUser
+        let memoryDir: URL
+        let projectPath: String
+
+        if let projectRoot = appState.selectedProjectRoot, appState.selectedScope != .user {
+            let escaped = projectRoot.path.replacingOccurrences(of: "/", with: "-")
+            memoryDir = home.appendingPathComponent(".claude/projects/\(escaped)/memory")
+            projectPath = escaped
+        } else {
+            memoryDir = home.appendingPathComponent(".claude/projects/-Users-\(NSUserName())/memory")
+            projectPath = "-Users-\(NSUserName())"
+        }
+
+        let filename = "new_memory.md"
+        let fileURL = memoryDir.appendingPathComponent(filename)
+
+        return MemoryEntry(
+            id: fileURL,
+            fileURL: fileURL,
+            projectPath: projectPath,
+            name: "new_memory",
+            description: "",
+            type: .feedback,
+            body: ""
+        )
     }
 }
 

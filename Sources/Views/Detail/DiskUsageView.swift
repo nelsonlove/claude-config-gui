@@ -3,6 +3,31 @@ import SwiftUI
 struct DiskUsageView: View {
     @State private var usage = DiskUsage()
     @State private var isLoading = true
+    @State private var cleanupTarget: CleanupTarget?
+    @State private var showCleanupConfirm = false
+
+    enum CleanupTarget: Identifiable {
+        case debug, cache, shellSnapshots, fileHistory
+        var id: Self { self }
+
+        var label: String {
+            switch self {
+            case .debug: "debug logs"
+            case .cache: "plugin cache temp files"
+            case .shellSnapshots: "shell snapshots"
+            case .fileHistory: "file history"
+            }
+        }
+
+        var dirName: String {
+            switch self {
+            case .debug: "debug"
+            case .cache: "cache"
+            case .shellSnapshots: "shell-snapshots"
+            case .fileHistory: "file-history"
+            }
+        }
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -46,7 +71,6 @@ struct DiskUsageView: View {
                             }
                             Spacer()
 
-                            // Size bar
                             let fraction = usage.totalBytes > 0
                                 ? CGFloat(entry.bytes) / CGFloat(usage.totalBytes) : 0
                             RoundedRectangle(cornerRadius: 2)
@@ -59,12 +83,75 @@ struct DiskUsageView: View {
                         }
                         .padding(.vertical, 2)
                     }
+
+                    Section {
+                        cleanupButton(.debug, icon: "ladybug")
+                        cleanupButton(.shellSnapshots, icon: "terminal")
+                        cleanupButton(.fileHistory, icon: "clock.arrow.circlepath")
+                        cleanupButton(.cache, icon: "archivebox")
+                    } header: {
+                        Text("Cleanup")
+                    } footer: {
+                        Text("Remove temporary data to free disk space. Settings, memory, and plugins are not affected.")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
                 }
                 .listStyle(.inset)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear { reload() }
+        .alert("Delete \(cleanupTarget?.label ?? "")?", isPresented: $showCleanupConfirm) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                if let target = cleanupTarget {
+                    performCleanup(target)
+                }
+            }
+        } message: {
+            if let target = cleanupTarget, let entry = usage.entries.first(where: { $0.name == target.dirName }) {
+                Text("This will delete \(entry.fileCount) files (\(entry.formattedSize)). This cannot be undone.")
+            } else {
+                Text("This cannot be undone.")
+            }
+        }
+    }
+
+    private func cleanupButton(_ target: CleanupTarget, icon: String) -> some View {
+        let entry = usage.entries.first { $0.name == target.dirName }
+        return Button {
+            cleanupTarget = target
+            showCleanupConfirm = true
+        } label: {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundStyle(.red)
+                    .frame(width: 20)
+                Text("Clear \(target.label)")
+                Spacer()
+                if let entry {
+                    Text(entry.formattedSize)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .disabled(entry == nil || entry?.bytes == 0)
+    }
+
+    private func performCleanup(_ target: CleanupTarget) {
+        let home = FileManager.default.homeDirectoryForCurrentUser
+        let dir = home.appendingPathComponent(".claude/\(target.dirName)")
+        let fm = FileManager.default
+
+        // Delete contents but keep the directory
+        if let files = try? fm.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil) {
+            for file in files {
+                try? fm.removeItem(at: file)
+            }
+        }
+        reload()
     }
 
     private func reload() {
