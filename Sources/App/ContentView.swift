@@ -46,6 +46,7 @@ struct ContentView: View {
                 }
             }
         }
+        .navigationTitle(windowTitle)
         .onAppear {
             appState.configEditor.load()
         }
@@ -57,6 +58,21 @@ struct ContentView: View {
         }
         .keyboardShortcut(for: .redo) {
             appState.configEditor.undoManager.redo()
+        }
+    }
+
+    private var windowTitle: String {
+        let scope = appState.selectedScope
+        switch scope {
+        case .user:
+            return "Claude Config — User"
+        case .project, .local:
+            let label = scope == .project ? "Project" : "Local"
+            if let root = appState.selectedProjectRoot {
+                let name = root.lastPathComponent
+                return "Claude Config — \(label): \(name)"
+            }
+            return "Claude Config — \(label)"
         }
     }
 }
