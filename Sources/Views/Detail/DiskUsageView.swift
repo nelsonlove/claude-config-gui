@@ -13,7 +13,7 @@ struct DiskUsageView: View {
         var label: String {
             switch self {
             case .debug: "debug logs"
-            case .cache: "plugin cache temp files"
+            case .cache: "cache"
             case .shellSnapshots: "shell snapshots"
             case .fileHistory: "file history"
             }
@@ -56,48 +56,64 @@ struct DiskUsageView: View {
                 ProgressView("Scanning…")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                List {
-                    ForEach(usage.entries) { entry in
-                        HStack {
-                            Image(systemName: dirIcon(entry.name))
-                                .foregroundStyle(.tint)
-                                .frame(width: 20)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(entry.name)
-                                    .font(.system(.body, design: .monospaced))
-                                Text("\(entry.fileCount) files")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // Directory breakdown
+                        GroupBox("Directories") {
+                            VStack(spacing: 4) {
+                                ForEach(usage.entries) { entry in
+                                    HStack {
+                                        Image(systemName: dirIcon(entry.name))
+                                            .foregroundStyle(.tint)
+                                            .frame(width: 20)
+                                        VStack(alignment: .leading, spacing: 1) {
+                                            Text(entry.name)
+                                                .font(.system(.body, design: .monospaced))
+                                            Text("\(entry.fileCount) files")
+                                                .font(.caption)
+                                                .foregroundStyle(.secondary)
+                                        }
+                                        Spacer()
+
+                                        let fraction = usage.totalBytes > 0
+                                            ? CGFloat(entry.bytes) / CGFloat(usage.totalBytes) : 0
+                                        RoundedRectangle(cornerRadius: 2)
+                                            .fill(.tint.opacity(0.3))
+                                            .frame(width: max(2, fraction * 120), height: 12)
+
+                                        Text(entry.formattedSize)
+                                            .font(.system(.body, design: .monospaced))
+                                            .frame(width: 80, alignment: .trailing)
+                                    }
+                                    .padding(.vertical, 3)
+                                    if entry.id != usage.entries.last?.id {
+                                        Divider()
+                                    }
+                                }
                             }
-                            Spacer()
-
-                            let fraction = usage.totalBytes > 0
-                                ? CGFloat(entry.bytes) / CGFloat(usage.totalBytes) : 0
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(.tint.opacity(0.3))
-                                .frame(width: max(2, fraction * 100), height: 12)
-
-                            Text(entry.formattedSize)
-                                .font(.system(.body, design: .monospaced))
-                                .frame(width: 70, alignment: .trailing)
+                            .padding(.vertical, 4)
                         }
-                        .padding(.vertical, 2)
-                    }
+                        .padding(.horizontal, 16)
 
-                    Section {
-                        cleanupButton(.debug, icon: "ladybug")
-                        cleanupButton(.shellSnapshots, icon: "terminal")
-                        cleanupButton(.fileHistory, icon: "clock.arrow.circlepath")
-                        cleanupButton(.cache, icon: "archivebox")
-                    } header: {
-                        Text("Cleanup")
-                    } footer: {
-                        Text("Remove temporary data to free disk space. Settings, memory, and plugins are not affected.")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                        // Cleanup actions
+                        GroupBox("Cleanup") {
+                            VStack(spacing: 8) {
+                                cleanupRow(.debug, icon: "ladybug")
+                                cleanupRow(.shellSnapshots, icon: "terminal")
+                                cleanupRow(.fileHistory, icon: "clock.arrow.circlepath")
+                                cleanupRow(.cache, icon: "archivebox")
+                            }
+                            .padding(.vertical, 4)
+
+                            Text("Remove temporary data to free disk space. Settings, memory, and plugins are not affected.")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .padding(.top, 4)
+                        }
+                        .padding(.horizontal, 16)
                     }
+                    .padding(.vertical, 16)
                 }
-                .listStyle(.inset)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -118,7 +134,7 @@ struct DiskUsageView: View {
         }
     }
 
-    private func cleanupButton(_ target: CleanupTarget, icon: String) -> some View {
+    private func cleanupRow(_ target: CleanupTarget, icon: String) -> some View {
         let entry = usage.entries.first { $0.name == target.dirName }
         return Button {
             cleanupTarget = target
@@ -137,7 +153,9 @@ struct DiskUsageView: View {
                 }
             }
         }
+        .buttonStyle(.plain)
         .disabled(entry == nil || entry?.bytes == 0)
+        .opacity(entry == nil || entry?.bytes == 0 ? 0.4 : 1)
     }
 
     private func performCleanup(_ target: CleanupTarget) {
@@ -145,7 +163,6 @@ struct DiskUsageView: View {
         let dir = home.appendingPathComponent(".claude/\(target.dirName)")
         let fm = FileManager.default
 
-        // Delete contents but keep the directory
         if let files = try? fm.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil) {
             for file in files {
                 try? fm.removeItem(at: file)
