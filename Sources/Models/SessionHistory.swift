@@ -59,7 +59,7 @@ struct SessionHistory {
     /// Scan history.jsonl for all sessions, most recent first.
     static func loadSessions() -> [SessionEntry] {
         let home = FileManager.default.homeDirectoryForCurrentUser
-        let historyURL = home.appendingPathComponent(".claude/history.jsonl")
+        let historyURL = claudePath("history.jsonl")
 
         guard let data = try? String(contentsOf: historyURL, encoding: .utf8) else { return [] }
 
@@ -108,7 +108,7 @@ struct SessionHistory {
 
     static func loadFromTranscript(sessionId: String) -> [SessionMessage]? {
         let home = FileManager.default.homeDirectoryForCurrentUser
-        let projectsDir = home.appendingPathComponent(".claude/projects")
+        let projectsDir = claudePath("projects")
         let fm = FileManager.default
 
         guard let projects = try? fm.contentsOfDirectory(at: projectsDir, includingPropertiesForKeys: nil)
@@ -125,7 +125,7 @@ struct SessionHistory {
 
     private static func loadFromHistory(sessionId: String) -> [SessionMessage] {
         let home = FileManager.default.homeDirectoryForCurrentUser
-        let historyURL = home.appendingPathComponent(".claude/history.jsonl")
+        let historyURL = claudePath("history.jsonl")
         guard let content = try? String(contentsOf: historyURL, encoding: .utf8) else { return [] }
 
         var messages: [SessionMessage] = []
@@ -234,7 +234,7 @@ struct SessionHistory {
         let fm = FileManager.default
 
         // Remove JSONL transcript
-        let projectsDir = home.appendingPathComponent(".claude/projects")
+        let projectsDir = claudePath("projects")
         if let projects = try? fm.contentsOfDirectory(at: projectsDir, includingPropertiesForKeys: nil) {
             for projectDir in projects {
                 let sessionFile = projectDir.appendingPathComponent("\(session.sessionId).jsonl")
@@ -248,15 +248,15 @@ struct SessionHistory {
         }
 
         // Remove session-meta
-        let metaFile = home.appendingPathComponent(".claude/usage-data/session-meta/\(session.sessionId).json")
+        let metaFile = claudePath("usage-data/session-meta/\(session.sessionId).json")
         try? fm.removeItem(at: metaFile)
 
         // Remove facets
-        let facetFile = home.appendingPathComponent(".claude/usage-data/facets/\(session.sessionId).json")
+        let facetFile = claudePath("usage-data/facets/\(session.sessionId).json")
         try? fm.removeItem(at: facetFile)
 
         // Remove from history.jsonl (rewrite without this session's entries)
-        let historyURL = home.appendingPathComponent(".claude/history.jsonl")
+        let historyURL = claudePath("history.jsonl")
         if let content = try? String(contentsOf: historyURL, encoding: .utf8) {
             let filtered = content.components(separatedBy: "\n")
                 .filter { line in

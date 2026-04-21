@@ -14,6 +14,7 @@
 		22746358C62548BD2BCDBC85 /* SessionBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E23D1C20409E39042B3322A /* SessionBrowserView.swift */; };
 		237C71DE7BCEAFE42587D8B9 /* RawJSONView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A669F90169F59C69185A7D37 /* RawJSONView.swift */; };
 		29183AFECAEF04F7690B7500 /* SessionHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634910EF660D06D5E832B1EE /* SessionHistory.swift */; };
+		2C288FD2672E453613E2E734 /* Paths.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00FCE4F3DD826E50E33C5726 /* Paths.swift */; };
 		3ACEB32BA7D560036978AE43 /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE7363A3F6A695E94ADDC03 /* GeneralSettingsView.swift */; };
 		3AD25C1F14C7629F627E6462 /* ConfigEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631654C11B7203FEB90293F0 /* ConfigEditor.swift */; };
 		4494F5927BA471687AFA44B3 /* SandboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B605903FAB788DE11705FC64 /* SandboxView.swift */; };
@@ -41,6 +42,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		00FCE4F3DD826E50E33C5726 /* Paths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paths.swift; sourceTree = "<group>"; };
 		1877C375C902E05A52D82A18 /* MCPServersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCPServersView.swift; sourceTree = "<group>"; };
 		25CDC710349425E55324627C /* MarkdownFileEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownFileEditor.swift; sourceTree = "<group>"; };
 		2C19847BDFFE198BF4E54EED /* HooksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HooksView.swift; sourceTree = "<group>"; };
@@ -152,6 +154,7 @@
 				99F51929C9D1C94B1097EBDE /* ConfigSection.swift */,
 				A751FA052BE0731913030CDA /* MCPConfig.swift */,
 				4F7D811AAD0F340F6F108269 /* MemoryEntry.swift */,
+				00FCE4F3DD826E50E33C5726 /* Paths.swift */,
 				634910EF660D06D5E832B1EE /* SessionHistory.swift */,
 				AD44C114429D72F19CEA3719 /* SessionStats.swift */,
 			);
@@ -278,6 +281,7 @@
 				09B71999DC9295636239DBB0 /* MemoryBrowserView.swift in Sources */,
 				4BEFC208646FD2EBF475DB81 /* MemoryEntry.swift in Sources */,
 				047F248B03C64F2E458C7278 /* OptionalControls.swift in Sources */,
+				2C288FD2672E453613E2E734 /* Paths.swift in Sources */,
 				1B38341DEA45D71EC6F6DF19 /* PermissionsView.swift in Sources */,
 				660DA2DB200BD55740F62C20 /* PluginsView.swift in Sources */,
 				237C71DE7BCEAFE42587D8B9 /* RawJSONView.swift in Sources */,

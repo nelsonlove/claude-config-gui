@@ -160,7 +160,7 @@ struct DiskUsageView: View {
 
     private func performCleanup(_ target: CleanupTarget) {
         let home = FileManager.default.homeDirectoryForCurrentUser
-        let dir = home.appendingPathComponent(".claude/\(target.dirName)")
+        let dir = claudePath(target.dirName)
         let fm = FileManager.default
 
         if let files = try? fm.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil) {

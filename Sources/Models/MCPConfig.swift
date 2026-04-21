@@ -89,7 +89,7 @@ struct PluginMCPServer: Identifiable {
 
     static func scanAll() -> [PluginMCPServer] {
         let home = FileManager.default.homeDirectoryForCurrentUser
-        let cacheDir = home.appendingPathComponent(".claude/plugins/cache")
+        let cacheDir = claudePath("plugins/cache")
         let fm = FileManager.default
         var results: [PluginMCPServer] = []
         var seen = Set<String>()

@@ -31,7 +31,7 @@ enum ConfigScope: String, CaseIterable, Identifiable {
         let home = FileManager.default.homeDirectoryForCurrentUser
         switch self {
         case .user:
-            return home.appendingPathComponent(".claude/settings.json")
+            return claudePath("settings.json")
         case .project:
             let root = projectRoot ?? URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
             return root.appendingPathComponent(".claude/settings.json")
@@ -50,7 +50,7 @@ enum ConfigScope: String, CaseIterable, Identifiable {
         let home = FileManager.default.homeDirectoryForCurrentUser
         switch self {
         case .user, .local:
-            return home.appendingPathComponent(".claude/CLAUDE.md")
+            return claudePath("CLAUDE.md")
         case .project:
             let root = projectRoot ?? URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
             return root.appendingPathComponent(".claude/CLAUDE.md")
@@ -63,7 +63,7 @@ enum ConfigScope: String, CaseIterable, Identifiable {
         case .user:
             return home.appendingPathComponent(".claude.json")
         case .local:
-            return home.appendingPathComponent(".claude/claude_desktop_config.json")
+            return claudePath("claude_desktop_config.json")
         case .project:
             let root = projectRoot ?? URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
             return root.appendingPathComponent(".mcp.json")

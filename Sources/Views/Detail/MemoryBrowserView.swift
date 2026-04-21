@@ -125,10 +125,10 @@ struct MemoryBrowserView: View {
 
         if let projectRoot = appState.selectedProjectRoot, appState.selectedScope != .user {
             let escaped = projectRoot.path.replacingOccurrences(of: "/", with: "-")
-            memoryDir = home.appendingPathComponent(".claude/projects/\(escaped)/memory")
+            memoryDir = claudePath("projects/\(escaped)/memory")
             projectPath = escaped
         } else {
-            memoryDir = home.appendingPathComponent(".claude/projects/-Users-\(NSUserName())/memory")
+            memoryDir = claudePath("projects/-Users-\(NSUserName())/memory")
             projectPath = "-Users-\(NSUserName())"
         }
 

@@ -24,7 +24,7 @@ struct SessionStats {
 
     static func load() -> SessionStats {
         let home = FileManager.default.homeDirectoryForCurrentUser
-        let metaDir = home.appendingPathComponent(".claude/usage-data/session-meta")
+        let metaDir = claudePath("usage-data/session-meta")
         let fm = FileManager.default
 
         guard let files = try? fm.contentsOfDirectory(at: metaDir, includingPropertiesForKeys: [.contentModificationDateKey])
@@ -122,8 +122,7 @@ struct DiskUsage {
     }
 
     static func scan() -> DiskUsage {
-        let home = FileManager.default.homeDirectoryForCurrentUser
-        let claudeDir = home.appendingPathComponent(".claude")
+        let claudeDir = claudeDirURL()
         let fm = FileManager.default
 
         guard let contents = try? fm.contentsOfDirectory(at: claudeDir, includingPropertiesForKeys: nil)

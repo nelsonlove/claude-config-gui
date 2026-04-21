@@ -97,7 +97,7 @@ struct ProjectMemory: Identifiable {
     /// Scan ~/.claude/projects/ for all projects with memory directories.
     static func scanAll() -> [ProjectMemory] {
         let home = FileManager.default.homeDirectoryForCurrentUser
-        let projectsDir = home.appendingPathComponent(".claude/projects")
+        let projectsDir = claudePath("projects")
         let fm = FileManager.default
 
         guard let projectDirs = try? fm.contentsOfDirectory(

@@ -138,7 +138,7 @@ struct PluginsView: View {
 
         // From known_marketplaces.json
         let home = FileManager.default.homeDirectoryForCurrentUser
-        let kmPath = home.appendingPathComponent(".claude/plugins/known_marketplaces.json")
+        let kmPath = claudePath("plugins/known_marketplaces.json")
         if let data = try? Data(contentsOf: kmPath),
            let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
             for name in dict.keys where results[name] == nil {

@@ -41,7 +41,7 @@ struct KnownProject: Identifiable, Hashable {
 
     static func scanAll() -> [KnownProject] {
         let home = FileManager.default.homeDirectoryForCurrentUser
-        let projectsDir = home.appendingPathComponent(".claude/projects")
+        let projectsDir = claudePath("projects")
         let fm = FileManager.default
 
         guard let dirs = try? fm.contentsOfDirectory(

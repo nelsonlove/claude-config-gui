@@ -127,7 +127,7 @@ final class ConfigEditor {
     private func loadInherited() {
         var parentURLs: [URL] = []
         let home = FileManager.default.homeDirectoryForCurrentUser
-        let userURL = home.appendingPathComponent(".claude/settings.json")
+        let userURL = claudePath("settings.json")
 
         switch scope {
         case .user:
