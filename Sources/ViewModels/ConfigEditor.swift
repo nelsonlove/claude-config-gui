@@ -177,6 +177,25 @@ final class ConfigEditor {
         return merged
     }
 
+    // MARK: - Effective config
+
+    /// The fully merged settings as Claude Code would see them.
+    /// User → Project → Local, with the current scope applied last.
+    var effectiveSettings: ClaudeSettings {
+        guard let base = inherited else { return settings }
+        return mergeSettings(base: base, overlay: settings)
+    }
+
+    var effectiveJSON: String {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        guard let data = try? encoder.encode(effectiveSettings),
+              let json = String(data: data, encoding: .utf8) else {
+            return "{ }"
+        }
+        return json
+    }
+
     // MARK: - Raw JSON
 
     func syncRawFromSettings() {

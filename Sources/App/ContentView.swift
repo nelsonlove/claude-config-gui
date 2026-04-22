@@ -31,17 +31,22 @@ struct ContentView: View {
 
                 Divider()
 
-                Toggle(isOn: $appState.showRawJSON) {
-                    Label("JSON", systemImage: "curlybraces")
-                }
-                .toggleStyle(.button)
-                .help("Toggle raw JSON editor")
-                .onChange(of: appState.showRawJSON) { _, showRaw in
-                    if showRaw {
-                        appState.configEditor.syncRawFromSettings()
-                    } else {
-                        // Switching back to form — apply any raw edits
-                        _ = appState.configEditor.syncSettingsFromRaw()
+                if appState.selectedSection.group == .settings {
+                    Picker("View", selection: $appState.settingsViewMode) {
+                        ForEach(SettingsViewMode.allCases) { mode in
+                            Label(mode.label, systemImage: mode.icon).tag(mode)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 200)
+                    .help("Form: editable panels · JSON: raw editor · Effective: merged read-only view")
+                    .onChange(of: appState.settingsViewMode) { oldMode, newMode in
+                        if newMode == .rawJSON {
+                            appState.configEditor.syncRawFromSettings()
+                        } else if oldMode == .rawJSON {
+                            // Leaving raw JSON — apply any edits
+                            _ = appState.configEditor.syncSettingsFromRaw()
+                        }
                     }
                 }
             }

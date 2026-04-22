@@ -18,6 +18,7 @@
 		3ACEB32BA7D560036978AE43 /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE7363A3F6A695E94ADDC03 /* GeneralSettingsView.swift */; };
 		3AD25C1F14C7629F627E6462 /* ConfigEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631654C11B7203FEB90293F0 /* ConfigEditor.swift */; };
 		4494F5927BA471687AFA44B3 /* SandboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B605903FAB788DE11705FC64 /* SandboxView.swift */; };
+		49BFE5A83D0E705D329DEAA5 /* EffectiveConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C39C5D2D59B89E9C96C4AA5D /* EffectiveConfigView.swift */; };
 		49C2610595D859E63F710B93 /* ClaudeSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64274441B52DC284F6D8D7D7 /* ClaudeSettings.swift */; };
 		4BEFC208646FD2EBF475DB81 /* MemoryEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7D811AAD0F340F6F108269 /* MemoryEntry.swift */; };
 		5FC427B1164F5FA640C3C072 /* MarkdownFileEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CDC710349425E55324627C /* MarkdownFileEditor.swift */; };
@@ -70,6 +71,7 @@
 		B605903FAB788DE11705FC64 /* SandboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxView.swift; sourceTree = "<group>"; };
 		B8908A7A07DB4724EDD84916 /* DiskUsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskUsageView.swift; sourceTree = "<group>"; };
 		BEE3F65B5BBE5003D5820787 /* MCPConfigEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCPConfigEditor.swift; sourceTree = "<group>"; };
+		C39C5D2D59B89E9C96C4AA5D /* EffectiveConfigView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectiveConfigView.swift; sourceTree = "<group>"; };
 		D2FCAE92FC89D1E9C44E0177 /* PluginsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginsView.swift; sourceTree = "<group>"; };
 		D5FDF96FA90F5991C7DE4864 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
 		DA9CAF348A6B7C9DE0ED4C6D /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
@@ -114,6 +116,7 @@
 				A7720EB8EA79DA43B8E2AECB /* AnalyticsView.swift */,
 				59B30486FB81B42D82CDF18F /* ClaudeMdView.swift */,
 				B8908A7A07DB4724EDD84916 /* DiskUsageView.swift */,
+				C39C5D2D59B89E9C96C4AA5D /* EffectiveConfigView.swift */,
 				8FE7363A3F6A695E94ADDC03 /* GeneralSettingsView.swift */,
 				2C19847BDFFE198BF4E54EED /* HooksView.swift */,
 				1877C375C902E05A52D82A18 /* MCPServersView.swift */,
@@ -272,6 +275,7 @@
 				812507A6F498F4DAA8890F64 /* ContentView.swift in Sources */,
 				C38B15616C2A05594DDDEF10 /* DetailView.swift in Sources */,
 				7A9B4B69C9D7E2932FA325AA /* DiskUsageView.swift in Sources */,
+				49BFE5A83D0E705D329DEAA5 /* EffectiveConfigView.swift in Sources */,
 				3ACEB32BA7D560036978AE43 /* GeneralSettingsView.swift in Sources */,
 				947215A20F171BCCE77D8BD8 /* HooksView.swift in Sources */,
 				807A079DC55F852576338F04 /* MCPConfig.swift in Sources */,

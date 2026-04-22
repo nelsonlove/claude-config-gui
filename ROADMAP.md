@@ -37,7 +37,7 @@ Core `settings.json` viewer/editor.
 - [x] Keyboard shortcuts (Cmd+S save, Cmd+Z undo, Cmd+Shift+Z redo)
 - [x] Validation (permission rule syntax checking with warning icons)
 - [x] Undo/redo via UndoManager (snapshot-based, registered on each mutation)
-- [ ] Merged/effective config read-only view (show what Claude actually sees)
+- [x] Merged/effective config read-only view (show what Claude actually sees)
 
 ## Phase 2: CLAUDE.md & Memory (current)
 

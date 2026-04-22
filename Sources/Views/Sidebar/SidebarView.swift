@@ -77,7 +77,14 @@ struct SidebarView: View {
     private var statusBar: some View {
         HStack(spacing: 6) {
             let editor = appState.configEditor
-            if let error = editor.loadError {
+            if appState.settingsViewMode == .effective
+                && appState.selectedSection.group == .settings {
+                Image(systemName: "eye")
+                    .foregroundStyle(.blue)
+                Text("Effective config (read-only)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } else if let error = editor.loadError {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundStyle(.red)
                 Text(error)

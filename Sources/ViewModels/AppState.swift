@@ -1,10 +1,34 @@
 import SwiftUI
 
+enum SettingsViewMode: String, CaseIterable, Identifiable {
+    case form
+    case rawJSON
+    case effective
+
+    var id: Self { self }
+
+    var label: String {
+        switch self {
+        case .form: "Form"
+        case .rawJSON: "JSON"
+        case .effective: "Effective"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .form: "slider.horizontal.3"
+        case .rawJSON: "curlybraces"
+        case .effective: "eye"
+        }
+    }
+}
+
 @Observable
 final class AppState {
     var selectedSection: ConfigSection = .general
     var selectedScope: ConfigScope = .user
-    var showRawJSON: Bool = false
+    var settingsViewMode: SettingsViewMode = .form
     var configEditor: ConfigEditor
     var selectedProjectRoot: URL?
     var knownProjects: [KnownProject] = []

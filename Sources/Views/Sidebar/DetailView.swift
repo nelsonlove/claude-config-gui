@@ -6,8 +6,10 @@ struct DetailView: View {
 
     var body: some View {
         Group {
-            if appState.showRawJSON && section.group == .settings {
+            if section.group == .settings && appState.settingsViewMode == .rawJSON {
                 RawJSONView()
+            } else if section.group == .settings && appState.settingsViewMode == .effective {
+                EffectiveConfigView()
             } else {
                 switch section {
                 // Settings panels use Form which needs ScrollView
