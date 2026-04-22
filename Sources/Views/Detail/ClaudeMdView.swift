@@ -3,6 +3,7 @@ import SwiftUI
 struct ClaudeMdView: View {
     @Environment(AppState.self) private var appState
     @State private var editor = MarkdownFileEditor()
+    @State private var showPreview = false
 
     private var fileURL: URL {
         appState.selectedScope.claudeMdURL(projectRoot: appState.selectedProjectRoot)
@@ -23,6 +24,13 @@ struct ClaudeMdView: View {
                         .foregroundStyle(.orange)
                         .font(.caption)
                 }
+
+                Toggle(isOn: $showPreview) {
+                    Label("Preview", systemImage: "eye")
+                }
+                .toggleStyle(.button)
+                .controlSize(.small)
+                .help("Toggle markdown preview")
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
@@ -43,12 +51,32 @@ struct ClaudeMdView: View {
                 .background(.red.opacity(0.08))
             }
 
-            TextEditor(text: Binding(
-                get: { editor.content },
-                set: { editor.content = $0; editor.markDirty() }
-            ))
-            .font(.system(.body, design: .monospaced))
-            .scrollContentBackground(.visible)
+            if showPreview {
+                HSplitView {
+                    TextEditor(text: Binding(
+                        get: { editor.content },
+                        set: { editor.content = $0; editor.markDirty() }
+                    ))
+                    .font(.system(.body, design: .monospaced))
+                    .scrollContentBackground(.visible)
+                    .frame(minWidth: 200)
+
+                    ScrollView {
+                        MarkdownPreview(source: editor.content)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(16)
+                    }
+                    .frame(minWidth: 200)
+                    .background(Color(.textBackgroundColor))
+                }
+            } else {
+                TextEditor(text: Binding(
+                    get: { editor.content },
+                    set: { editor.content = $0; editor.markDirty() }
+                ))
+                .font(.system(.body, design: .monospaced))
+                .scrollContentBackground(.visible)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear { loadForCurrentScope() }
@@ -66,5 +94,30 @@ struct ClaudeMdView: View {
             of: FileManager.default.homeDirectoryForCurrentUser.path,
             with: "~"
         )
+    }
+}
+
+// MARK: - Markdown Preview
+
+/// Renders markdown using AttributedString for zero-dependency preview.
+struct MarkdownPreview: View {
+    let source: String
+
+    var body: some View {
+        if source.isEmpty {
+            Text("Empty file")
+                .foregroundStyle(.tertiary)
+                .italic()
+        } else if let attributed = try? AttributedString(
+            markdown: source,
+            options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+        ) {
+            Text(attributed)
+                .textSelection(.enabled)
+        } else {
+            // Fallback: plain text if markdown parsing fails
+            Text(source)
+                .textSelection(.enabled)
+        }
     }
 }

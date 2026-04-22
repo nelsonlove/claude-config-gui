@@ -45,9 +45,9 @@ Core `settings.json` viewer/editor.
 - [x] Memory browser: list/view/edit/delete files in `projects/*/memory/`
 - [x] Memory frontmatter editor (name, description, type fields)
 - [x] Project scanner (enumerate all `~/.claude/projects/*/` with memory dirs)
-- [ ] Split-pane preview (edit left, rendered markdown right)
-- [ ] Create new memory file
-- [ ] MEMORY.md index viewer
+- [x] Split-pane preview (edit left, rendered markdown right)
+- [x] Create new memory file
+- [x] MEMORY.md index viewer
 
 ## Phase 3: MCP Servers (current)
 

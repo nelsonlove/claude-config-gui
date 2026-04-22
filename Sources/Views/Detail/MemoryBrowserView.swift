@@ -6,6 +6,7 @@ struct MemoryBrowserView: View {
     @State private var selectedEntry: MemoryEntry?
     @State private var editingEntry: MemoryEntry?
     @State private var showNewMemory = false
+    @State private var showingIndexFor: String?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -59,6 +60,32 @@ struct MemoryBrowserView: View {
                 List(selection: $selectedEntry) {
                     ForEach(projects) { project in
                         Section {
+                            if showingIndexFor == project.id,
+                               let indexContent = project.indexContent {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    HStack {
+                                        Text("MEMORY.md")
+                                            .font(.caption.bold())
+                                            .foregroundStyle(.secondary)
+                                        Spacer()
+                                        Button {
+                                            showingIndexFor = nil
+                                        } label: {
+                                            Image(systemName: "xmark.circle.fill")
+                                                .foregroundStyle(.secondary)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                    Text(indexContent)
+                                        .font(.system(.caption, design: .monospaced))
+                                        .textSelection(.enabled)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                                .padding(10)
+                                .background(.quaternary.opacity(0.5))
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                            }
+
                             ForEach(project.entries) { entry in
                                 MemoryEntryRow(entry: entry)
                                     .tag(entry)
@@ -71,9 +98,24 @@ struct MemoryBrowserView: View {
                                     }
                             }
                         } header: {
-                            Text(project.displayName)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                            HStack {
+                                Text(project.displayName)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                Spacer()
+                                if project.indexContent != nil {
+                                    Button {
+                                        withAnimation {
+                                            showingIndexFor = showingIndexFor == project.id ? nil : project.id
+                                        }
+                                    } label: {
+                                        Label("Index", systemImage: "list.bullet.rectangle")
+                                            .font(.caption)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .foregroundStyle(.tint)
+                                }
+                            }
                         }
                     }
                 }

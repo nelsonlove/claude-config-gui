@@ -93,6 +93,8 @@ struct ProjectMemory: Identifiable {
     let displayName: String
     let memoryDir: URL
     var entries: [MemoryEntry]
+    /// Contents of MEMORY.md index file, if present.
+    var indexContent: String?
 
     /// Scan ~/.claude/projects/ for all projects with memory directories.
     static func scanAll() -> [ProjectMemory] {
@@ -123,6 +125,9 @@ struct ProjectMemory: Identifiable {
                 .filter { $0.pathExtension == "md" }
                 .compactMap { MemoryEntry.parse(from: $0, projectPath: dirName) }
 
+            let indexURL = memoryDir.appendingPathComponent("MEMORY.md")
+            let indexContent = try? String(contentsOf: indexURL, encoding: .utf8)
+
             guard !entries.isEmpty else { return nil }
 
             return ProjectMemory(
@@ -130,7 +135,8 @@ struct ProjectMemory: Identifiable {
                 path: dirName,
                 displayName: displayName,
                 memoryDir: memoryDir,
-                entries: entries
+                entries: entries,
+                indexContent: indexContent
             )
         }
         .sorted { $0.entries.count > $1.entries.count }
