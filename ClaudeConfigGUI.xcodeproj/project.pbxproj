@@ -32,6 +32,7 @@
 		871C61BE921A6629087D47F3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 46DB955C876F288DBBA69E73 /* Assets.xcassets */; };
 		8AE5F0C9400EF1DB29175704 /* MCPServersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1877C375C902E05A52D82A18 /* MCPServersView.swift */; };
 		947215A20F171BCCE77D8BD8 /* HooksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C19847BDFFE198BF4E54EED /* HooksView.swift */; };
+		A745721DD8E0ADC11349EED6 /* MCPConnectionTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0443A1176E7C07C12BF9D890 /* MCPConnectionTester.swift */; };
 		A8043DD70D15B66C3D686CC2 /* ClaudeConfigApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52474C4C9C0477B9F2F9B23 /* ClaudeConfigApp.swift */; };
 		B972B8C6AB2943F7063A536E /* AnyCodableValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811362365B33ABBB4F3EF734 /* AnyCodableValue.swift */; };
 		C38B15616C2A05594DDDEF10 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9CAF348A6B7C9DE0ED4C6D /* DetailView.swift */; };
@@ -44,6 +45,7 @@
 
 /* Begin PBXFileReference section */
 		00FCE4F3DD826E50E33C5726 /* Paths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paths.swift; sourceTree = "<group>"; };
+		0443A1176E7C07C12BF9D890 /* MCPConnectionTester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCPConnectionTester.swift; sourceTree = "<group>"; };
 		1877C375C902E05A52D82A18 /* MCPServersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCPServersView.swift; sourceTree = "<group>"; };
 		25CDC710349425E55324627C /* MarkdownFileEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownFileEditor.swift; sourceTree = "<group>"; };
 		2C19847BDFFE198BF4E54EED /* HooksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HooksView.swift; sourceTree = "<group>"; };
@@ -97,6 +99,7 @@
 				631654C11B7203FEB90293F0 /* ConfigEditor.swift */,
 				25CDC710349425E55324627C /* MarkdownFileEditor.swift */,
 				BEE3F65B5BBE5003D5820787 /* MCPConfigEditor.swift */,
+				0443A1176E7C07C12BF9D890 /* MCPConnectionTester.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -280,6 +283,7 @@
 				947215A20F171BCCE77D8BD8 /* HooksView.swift in Sources */,
 				807A079DC55F852576338F04 /* MCPConfig.swift in Sources */,
 				E0CC2BEBF5F3FEACFE534EB4 /* MCPConfigEditor.swift in Sources */,
+				A745721DD8E0ADC11349EED6 /* MCPConnectionTester.swift in Sources */,
 				8AE5F0C9400EF1DB29175704 /* MCPServersView.swift in Sources */,
 				5FC427B1164F5FA640C3C072 /* MarkdownFileEditor.swift in Sources */,
 				09B71999DC9295636239DBB0 /* MemoryBrowserView.swift in Sources */,

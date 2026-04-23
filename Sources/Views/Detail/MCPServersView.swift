@@ -9,6 +9,8 @@ struct MCPServersView: View {
     @State private var enabledServers: Set<String> = []
     @State private var disabledServers: Set<String> = []
     @State private var enableAllProject: Bool = false
+    @State private var testingServer: String?
+    @State private var testResult: (server: String, result: MCPConnectionTester.TestResult)?
 
     private var mcpURL: URL {
         appState.selectedScope.mcpURL(projectRoot: appState.selectedProjectRoot)
@@ -41,6 +43,39 @@ struct MCPServersView: View {
             .padding(.vertical, 10)
 
             Divider()
+
+            if let test = testResult {
+                HStack(spacing: 8) {
+                    switch test.result {
+                    case .success(let name, let version):
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                        Text("\(test.server): connected")
+                            .font(.subheadline)
+                        Text("— \(name)\(version.map { " v\($0)" } ?? "")")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    case .failure(let message):
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.red)
+                        Text("\(test.server): \(message)")
+                            .font(.subheadline)
+                            .foregroundStyle(.red)
+                            .lineLimit(2)
+                    }
+                    Spacer()
+                    Button {
+                        testResult = nil
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(testResultBackground)
+            }
 
             if let error = editor?.loadError {
                 HStack {
@@ -76,9 +111,17 @@ struct MCPServersView: View {
                         } else {
                             ForEach(Array(servers.enumerated()), id: \.element.name) { index, server in
                                 let status = approvalStatus(for: server.name)
-                                MCPServerRow(server: server, approvalStatus: status)
+                                MCPServerRow(
+                                    server: server,
+                                    approvalStatus: status,
+                                    isTesting: testingServer == server.name
+                                )
                                     .contextMenu {
                                         Button("Edit") { editingServer = server }
+                                        Button("Test Connection") {
+                                            testConnection(server)
+                                        }
+                                        .disabled(testingServer != nil)
                                         Divider()
                                         if status != .enabled {
                                             Button("Approve") { setApproval(server.name, enabled: true) }
@@ -227,6 +270,26 @@ struct MCPServersView: View {
         try? data.write(to: settingsURL, options: .atomic)
     }
 
+    private var testResultBackground: Color {
+        guard let test = testResult else { return .clear }
+        switch test.result {
+        case .success: return .green.opacity(0.08)
+        case .failure: return .red.opacity(0.08)
+        }
+    }
+
+    private func testConnection(_ server: MCPServer) {
+        testingServer = server.name
+        testResult = nil
+        Task {
+            let result = await MCPConnectionTester.test(server)
+            await MainActor.run {
+                testResult = (server: server.name, result: result)
+                testingServer = nil
+            }
+        }
+    }
+
     private func addServer() {
         let name = newServerName.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return }
@@ -241,12 +304,19 @@ struct MCPServersView: View {
 struct MCPServerRow: View {
     let server: MCPServer
     var approvalStatus: MCPApprovalStatus = .pending
+    var isTesting: Bool = false
 
     var body: some View {
         HStack(spacing: 10) {
-            Image(systemName: server.transportType.icon)
-                .foregroundStyle(.tint)
-                .frame(width: 20)
+            if isTesting {
+                ProgressView()
+                    .controlSize(.small)
+                    .frame(width: 20)
+            } else {
+                Image(systemName: server.transportType.icon)
+                    .foregroundStyle(.tint)
+                    .frame(width: 20)
+            }
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(server.name)

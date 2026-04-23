@@ -59,7 +59,7 @@ Core `settings.json` viewer/editor.
 - [x] Add/remove servers with inline name entry
 - [x] Context menu edit/delete on each server row
 - [x] Server approval status from settings.json (`enabledMcpjsonServers` / `disabledMcpjsonServers`)
-- [ ] Test connection button (launch server, check for handshake)
+- [x] Test connection button (launch server, check for handshake)
 
 ## Phase 4: Analytics & Housekeeping
 
