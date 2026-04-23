@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 /// Top-level structure of ~/.claude.json or .mcp.json (only the MCP parts).
 /// Uses permissive decoding — unknown keys are preserved in `otherKeys`.
@@ -49,6 +50,36 @@ struct MCPServer: Codable, Identifiable {
             [command, args?.joined(separator: " ")].compactMap { $0 }.joined(separator: " ")
         case .sse, .http, .ws:
             url ?? "(no url)"
+        }
+    }
+}
+
+enum MCPApprovalStatus: String {
+    case enabled
+    case disabled
+    case pending
+
+    var label: String {
+        switch self {
+        case .enabled: "enabled"
+        case .disabled: "disabled"
+        case .pending: "pending"
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .enabled: .green
+        case .disabled: .red
+        case .pending: .orange
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .enabled: "checkmark.circle.fill"
+        case .disabled: "xmark.circle.fill"
+        case .pending: "questionmark.circle.fill"
         }
     }
 }

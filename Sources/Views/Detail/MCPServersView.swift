@@ -6,9 +6,19 @@ struct MCPServersView: View {
     @State private var editingServer: MCPServer?
     @State private var newServerName = ""
     @State private var pluginServers: [PluginMCPServer] = []
+    @State private var enabledServers: Set<String> = []
+    @State private var disabledServers: Set<String> = []
+    @State private var enableAllProject: Bool = false
 
     private var mcpURL: URL {
         appState.selectedScope.mcpURL(projectRoot: appState.selectedProjectRoot)
+    }
+
+    private func approvalStatus(for serverName: String) -> MCPApprovalStatus {
+        if enableAllProject { return .enabled }
+        if enabledServers.contains(serverName) { return .enabled }
+        if disabledServers.contains(serverName) { return .disabled }
+        return .pending
     }
 
     var body: some View {
@@ -65,9 +75,20 @@ struct MCPServersView: View {
                             )
                         } else {
                             ForEach(Array(servers.enumerated()), id: \.element.name) { index, server in
-                                MCPServerRow(server: server)
+                                let status = approvalStatus(for: server.name)
+                                MCPServerRow(server: server, approvalStatus: status)
                                     .contextMenu {
                                         Button("Edit") { editingServer = server }
+                                        Divider()
+                                        if status != .enabled {
+                                            Button("Approve") { setApproval(server.name, enabled: true) }
+                                        }
+                                        if status != .disabled {
+                                            Button("Deny") { setApproval(server.name, enabled: false) }
+                                        }
+                                        if status != .pending {
+                                            Button("Reset to Pending") { clearApproval(server.name) }
+                                        }
                                         Divider()
                                         Button("Delete", role: .destructive) {
                                             editor?.removeServer(at: index)
@@ -144,6 +165,66 @@ struct MCPServersView: View {
         newEditor.load()
         editor = newEditor
         pluginServers = PluginMCPServer.scanAll()
+        loadApprovalStatus()
+    }
+
+    private func loadApprovalStatus() {
+        let settingsURL = ConfigScope.user.settingsURL()
+        guard let data = try? Data(contentsOf: settingsURL),
+              let settings = try? JSONDecoder().decode(ClaudeSettings.self, from: data) else {
+            enabledServers = []
+            disabledServers = []
+            enableAllProject = false
+            return
+        }
+        enabledServers = Set(settings.enabledMcpjsonServers ?? [])
+        disabledServers = Set(settings.disabledMcpjsonServers ?? [])
+        enableAllProject = settings.enableAllProjectMcpServers ?? false
+    }
+
+    private func setApproval(_ serverName: String, enabled: Bool) {
+        enabledServers.remove(serverName)
+        disabledServers.remove(serverName)
+        if enabled {
+            enabledServers.insert(serverName)
+        } else {
+            disabledServers.insert(serverName)
+        }
+        saveApprovalStatus()
+    }
+
+    private func clearApproval(_ serverName: String) {
+        enabledServers.remove(serverName)
+        disabledServers.remove(serverName)
+        saveApprovalStatus()
+    }
+
+    private func saveApprovalStatus() {
+        let settingsURL = ConfigScope.user.settingsURL()
+        // Read-modify-write to preserve other keys
+        let fm = FileManager.default
+        var dict: [String: Any] = [:]
+        if let data = try? Data(contentsOf: settingsURL),
+           let existing = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+            dict = existing
+        }
+
+        if enabledServers.isEmpty {
+            dict.removeValue(forKey: "enabledMcpjsonServers")
+        } else {
+            dict["enabledMcpjsonServers"] = enabledServers.sorted()
+        }
+
+        if disabledServers.isEmpty {
+            dict.removeValue(forKey: "disabledMcpjsonServers")
+        } else {
+            dict["disabledMcpjsonServers"] = disabledServers.sorted()
+        }
+
+        guard let data = try? JSONSerialization.data(withJSONObject: dict, options: [.prettyPrinted, .sortedKeys]) else { return }
+        let dir = settingsURL.deletingLastPathComponent()
+        try? fm.createDirectory(at: dir, withIntermediateDirectories: true)
+        try? data.write(to: settingsURL, options: .atomic)
     }
 
     private func addServer() {
@@ -159,6 +240,7 @@ struct MCPServersView: View {
 
 struct MCPServerRow: View {
     let server: MCPServer
+    var approvalStatus: MCPApprovalStatus = .pending
 
     var body: some View {
         HStack(spacing: 10) {
@@ -177,6 +259,10 @@ struct MCPServerRow: View {
             }
 
             Spacer()
+
+            Image(systemName: approvalStatus.icon)
+                .foregroundStyle(approvalStatus.color)
+                .help(approvalStatus.label.capitalized)
 
             Text(server.transportType.label)
                 .font(.caption)
