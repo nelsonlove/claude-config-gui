@@ -69,10 +69,10 @@ Core `settings.json` viewer/editor.
   - Language tags
   - Recent sessions list with first prompt, duration, tokens
 - [x] Disk usage breakdown with bar chart per directory
-- [ ] Session history browser (`history.jsonl`)
-- [ ] File history viewer (`file-history/`)
-- [ ] Debug log cleanup actions
-- [ ] Session pruning (honor `cleanupPeriodDays`)
+- [x] Session history browser (`history.jsonl`)
+- [x] File history viewer (`file-history/`)
+- [x] Debug log cleanup actions
+- [x] Session pruning (honor `cleanupPeriodDays`)
 
 ## Phase 5: Polish & Distribution
 

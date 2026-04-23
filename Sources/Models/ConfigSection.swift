@@ -12,6 +12,7 @@ enum ConfigSection: String, CaseIterable, Identifiable {
     case mcpServers
     case sessions
     case analytics
+    case fileHistory
     case diskUsage
 
     var id: Self { self }
@@ -29,6 +30,7 @@ enum ConfigSection: String, CaseIterable, Identifiable {
         case .mcpServers: "MCP Servers"
         case .sessions: "Sessions"
         case .analytics: "Analytics"
+        case .fileHistory: "File History"
         case .diskUsage: "Disk Usage"
         }
     }
@@ -46,6 +48,7 @@ enum ConfigSection: String, CaseIterable, Identifiable {
         case .mcpServers: "server.rack"
         case .sessions: "bubble.left.and.bubble.right"
         case .analytics: "chart.bar"
+        case .fileHistory: "clock.arrow.circlepath"
         case .diskUsage: "internaldrive"
         }
     }
@@ -63,6 +66,7 @@ enum ConfigSection: String, CaseIterable, Identifiable {
         case .mcpServers: "External tool integrations"
         case .sessions: "Browse and search past sessions"
         case .analytics: "Session stats and usage trends"
+        case .fileHistory: "Browse file snapshots from sessions"
         case .diskUsage: "Storage breakdown of ~/.claude"
         }
     }
@@ -76,7 +80,7 @@ enum ConfigSection: String, CaseIterable, Identifiable {
             return .knowledge
         case .mcpServers:
             return .integrations
-        case .sessions, .analytics, .diskUsage:
+        case .sessions, .analytics, .fileHistory, .diskUsage:
             return .system
         }
     }

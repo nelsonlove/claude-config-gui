@@ -5,6 +5,9 @@ struct DiskUsageView: View {
     @State private var isLoading = true
     @State private var cleanupTarget: CleanupTarget?
     @State private var showCleanupConfirm = false
+    @State private var showPruneConfirm = false
+    @State private var pruneCount = 0
+    @State private var pruneSessionIds: [String] = []
 
     enum CleanupTarget: Identifiable {
         case debug, cache, shellSnapshots, fileHistory
@@ -111,6 +114,30 @@ struct DiskUsageView: View {
                                 .padding(.top, 4)
                         }
                         .padding(.horizontal, 16)
+
+                        // Session pruning
+                        GroupBox("Session Pruning") {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Button {
+                                    preparePrune()
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "scissors")
+                                            .foregroundStyle(.red)
+                                            .frame(width: 20)
+                                        Text("Prune old sessions")
+                                        Spacer()
+                                    }
+                                }
+                                .buttonStyle(.plain)
+
+                                Text("Deletes session transcripts, metadata, and file history older than the configured cleanup period (default 30 days).")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .padding(.horizontal, 16)
                     }
                     .padding(.vertical, 16)
                 }
@@ -118,6 +145,14 @@ struct DiskUsageView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear { reload() }
+        .alert("Prune \(pruneCount) old sessions?", isPresented: $showPruneConfirm) {
+            Button("Cancel", role: .cancel) {}
+            Button("Prune", role: .destructive) {
+                performPrune()
+            }
+        } message: {
+            Text("This will delete transcripts, metadata, facets, and file history for \(pruneCount) sessions. This cannot be undone.")
+        }
         .alert("Delete \(cleanupTarget?.label ?? "")?", isPresented: $showCleanupConfirm) {
             Button("Cancel", role: .cancel) {}
             Button("Delete", role: .destructive) {
@@ -156,6 +191,70 @@ struct DiskUsageView: View {
         .buttonStyle(.plain)
         .disabled(entry == nil || entry?.bytes == 0)
         .opacity(entry == nil || entry?.bytes == 0 ? 0.4 : 1)
+    }
+
+    private func preparePrune() {
+        let settingsURL = ConfigScope.user.settingsURL()
+        var cleanupDays = 30 // default
+        if let data = try? Data(contentsOf: settingsURL),
+           let settings = try? JSONDecoder().decode(ClaudeSettings.self, from: data),
+           let days = settings.cleanupPeriodDays {
+            cleanupDays = days
+        }
+
+        guard cleanupDays > 0 else { return } // 0 means disabled
+
+        let cutoff = Date().addingTimeInterval(-Double(cleanupDays) * 86400)
+        let metaDir = claudePath("usage-data/session-meta")
+        let fm = FileManager.default
+
+        guard let files = try? fm.contentsOfDirectory(at: metaDir, includingPropertiesForKeys: [.contentModificationDateKey])
+        else { return }
+
+        pruneSessionIds = []
+        for file in files where file.pathExtension == "json" {
+            guard let attrs = try? file.resourceValues(forKeys: [.contentModificationDateKey]),
+                  let modDate = attrs.contentModificationDate,
+                  modDate < cutoff else { continue }
+            let sessionId = file.deletingPathExtension().lastPathComponent
+            pruneSessionIds.append(sessionId)
+        }
+
+        pruneCount = pruneSessionIds.count
+        if pruneCount > 0 {
+            showPruneConfirm = true
+        }
+    }
+
+    private func performPrune() {
+        let fm = FileManager.default
+        for sessionId in pruneSessionIds {
+            // Remove session-meta
+            let metaFile = claudePath("usage-data/session-meta/\(sessionId).json")
+            try? fm.removeItem(at: metaFile)
+
+            // Remove facets
+            let facetFile = claudePath("usage-data/facets/\(sessionId).json")
+            try? fm.removeItem(at: facetFile)
+
+            // Remove file history
+            let historyDir = claudePath("file-history/\(sessionId)")
+            try? fm.removeItem(at: historyDir)
+
+            // Remove session transcripts from all projects
+            let projectsDir = claudePath("projects")
+            if let projects = try? fm.contentsOfDirectory(at: projectsDir, includingPropertiesForKeys: nil) {
+                for projectDir in projects {
+                    let sessionFile = projectDir.appendingPathComponent("\(sessionId).jsonl")
+                    try? fm.removeItem(at: sessionFile)
+                    let subagentDir = projectDir.appendingPathComponent(sessionId)
+                    if fm.fileExists(atPath: subagentDir.path) {
+                        try? fm.removeItem(at: subagentDir)
+                    }
+                }
+            }
+        }
+        reload()
     }
 
     private func performCleanup(_ target: CleanupTarget) {

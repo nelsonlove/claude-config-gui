@@ -36,6 +36,8 @@ struct DetailView: View {
                     SessionBrowserView()
                 case .analytics:
                     AnalyticsView()
+                case .fileHistory:
+                    FileHistoryView()
                 case .diskUsage:
                     DiskUsageView()
                 }

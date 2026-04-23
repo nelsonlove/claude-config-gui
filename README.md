@@ -18,7 +18,8 @@ Claude Code stores its configuration across a sprawl of JSON files, Markdown doc
 | **MCP Servers** | Configure servers with approval status badges and connection testing |
 | **Sessions** | Search past sessions, read transcripts, inspect tool call I/O |
 | **Analytics** | Token usage, tool breakdown, language stats, session history |
-| **Disk Usage** | Storage breakdown with cleanup actions |
+| **File History** | Browse versioned file snapshots from past sessions |
+| **Disk Usage** | Storage breakdown with cleanup actions and session pruning |
 
 ## Key Features
 

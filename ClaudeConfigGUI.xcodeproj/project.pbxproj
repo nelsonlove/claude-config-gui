@@ -37,6 +37,7 @@
 		B972B8C6AB2943F7063A536E /* AnyCodableValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811362365B33ABBB4F3EF734 /* AnyCodableValue.swift */; };
 		C38B15616C2A05594DDDEF10 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9CAF348A6B7C9DE0ED4C6D /* DetailView.swift */; };
 		D20B31FCE38505E2A3159EB0 /* ConfigSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F51929C9D1C94B1097EBDE /* ConfigSection.swift */; };
+		D58D7C0AB6251B8F4580A7B6 /* FileHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7E18D92CE6C77ABF31B3832 /* FileHistoryView.swift */; };
 		DB9C222A2B6FD0825C652313 /* SessionStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD44C114429D72F19CEA3719 /* SessionStats.swift */; };
 		E0CC2BEBF5F3FEACFE534EB4 /* MCPConfigEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE3F65B5BBE5003D5820787 /* MCPConfigEditor.swift */; };
 		E1E5DDB046F2FC5187A95B21 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5FDF96FA90F5991C7DE4864 /* SidebarView.swift */; };
@@ -79,6 +80,7 @@
 		DA9CAF348A6B7C9DE0ED4C6D /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		DE34C5F00325D3348CCF1CBE /* OptionalControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalControls.swift; sourceTree = "<group>"; };
 		E0F9A8AADAEA140CA6CB9246 /* AdvancedSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedSettingsView.swift; sourceTree = "<group>"; };
+		E7E18D92CE6C77ABF31B3832 /* FileHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHistoryView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -120,6 +122,7 @@
 				59B30486FB81B42D82CDF18F /* ClaudeMdView.swift */,
 				B8908A7A07DB4724EDD84916 /* DiskUsageView.swift */,
 				C39C5D2D59B89E9C96C4AA5D /* EffectiveConfigView.swift */,
+				E7E18D92CE6C77ABF31B3832 /* FileHistoryView.swift */,
 				8FE7363A3F6A695E94ADDC03 /* GeneralSettingsView.swift */,
 				2C19847BDFFE198BF4E54EED /* HooksView.swift */,
 				1877C375C902E05A52D82A18 /* MCPServersView.swift */,
@@ -279,6 +282,7 @@
 				C38B15616C2A05594DDDEF10 /* DetailView.swift in Sources */,
 				7A9B4B69C9D7E2932FA325AA /* DiskUsageView.swift in Sources */,
 				49BFE5A83D0E705D329DEAA5 /* EffectiveConfigView.swift in Sources */,
+				D58D7C0AB6251B8F4580A7B6 /* FileHistoryView.swift in Sources */,
 				3ACEB32BA7D560036978AE43 /* GeneralSettingsView.swift in Sources */,
 				947215A20F171BCCE77D8BD8 /* HooksView.swift in Sources */,
 				807A079DC55F852576338F04 /* MCPConfig.swift in Sources */,
