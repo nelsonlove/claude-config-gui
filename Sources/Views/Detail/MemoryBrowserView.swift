@@ -89,6 +89,7 @@ struct MemoryBrowserView: View {
                             ForEach(project.entries) { entry in
                                 MemoryEntryRow(entry: entry)
                                     .tag(entry)
+                                    .draggable(entry.fileURL)
                                     .contextMenu {
                                         Button("Edit") { editingEntry = entry }
                                         Divider()
@@ -116,6 +117,9 @@ struct MemoryBrowserView: View {
                                     .foregroundStyle(.tint)
                                 }
                             }
+                        }
+                        .dropDestination(for: URL.self) { urls, _ in
+                            moveEntries(urls: urls, to: project)
                         }
                     }
                 }
@@ -151,6 +155,42 @@ struct MemoryBrowserView: View {
         let content = entry.serialize()
         try? content.write(to: entry.fileURL, atomically: true, encoding: .utf8)
         projects = ProjectMemory.scanAll()
+    }
+
+    private func moveEntries(urls: [URL], to target: ProjectMemory) -> Bool {
+        let fm = FileManager.default
+        var moved = false
+        for sourceURL in urls {
+            // Skip if already in the target project
+            guard sourceURL.deletingLastPathComponent() != target.memoryDir else { continue }
+            // Skip non-.md or MEMORY.md
+            guard sourceURL.pathExtension == "md",
+                  sourceURL.lastPathComponent != "MEMORY.md" else { continue }
+
+            var destURL = target.memoryDir.appendingPathComponent(sourceURL.lastPathComponent)
+
+            // Handle filename collision
+            if fm.fileExists(atPath: destURL.path) {
+                let stem = destURL.deletingPathExtension().lastPathComponent
+                var counter = 2
+                while fm.fileExists(atPath: destURL.path) {
+                    destURL = target.memoryDir.appendingPathComponent("\(stem)_\(counter).md")
+                    counter += 1
+                }
+            }
+
+            try? fm.createDirectory(at: target.memoryDir, withIntermediateDirectories: true)
+            do {
+                try fm.moveItem(at: sourceURL, to: destURL)
+                moved = true
+            } catch {
+                continue
+            }
+        }
+        if moved {
+            projects = ProjectMemory.scanAll()
+        }
+        return moved
     }
 
     private func deleteEntry(_ entry: MemoryEntry) {
