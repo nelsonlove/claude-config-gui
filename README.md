@@ -12,10 +12,10 @@ Claude Code stores its configuration across a sprawl of JSON files, Markdown doc
 
 | Section | What it does |
 |---------|-------------|
-| **Settings** | Visual editor for all ~60 settings.json fields across 6 panels |
-| **CLAUDE.md** | Monospaced editor for global and project convention files |
-| **Memory** | Browse, create, edit, and delete memory files with frontmatter |
-| **MCP Servers** | Configure stdio/SSE/HTTP/WS servers + view plugin-provided ones |
+| **Settings** | Visual editor for all ~60 settings.json fields across 6 panels, plus merged effective config view |
+| **CLAUDE.md** | Monospaced editor with split-pane markdown preview |
+| **Memory** | Browse, create, edit, delete, and drag-and-drop memory files between projects |
+| **MCP Servers** | Configure servers with approval status badges and connection testing |
 | **Sessions** | Search past sessions, read transcripts, inspect tool call I/O |
 | **Analytics** | Token usage, tool breakdown, language stats, session history |
 | **Disk Usage** | Storage breakdown with cleanup actions |
@@ -24,11 +24,15 @@ Claude Code stores its configuration across a sprawl of JSON files, Markdown doc
 
 **Scope-aware editing** — A single User / Project / Local picker in the sidebar drives every view. When set to Project, a dropdown lets you select from all known projects. Settings show inherited values from parent scopes as ghost indicators.
 
-**Settings editor** — Grouped form panels for General, Permissions, Hooks, Plugins, Sandbox, and Advanced. Toggle to raw JSON for power-user editing. Permission rules are validated inline. Undo/redo with Cmd+Z.
+**Settings editor** — Grouped form panels for General, Permissions, Hooks, Plugins, Sandbox, and Advanced. Three-way view toggle: Form, raw JSON, or Effective (merged read-only view showing what Claude actually sees across all scopes). Permission rules are validated inline. Undo/redo with Cmd+Z.
+
+**CLAUDE.md editor** — Monospaced text editor with an optional split-pane markdown preview. Edit on the left, see rendered output on the right.
+
+**Memory browser** — Browse, create, edit, and delete memory files with frontmatter editing. View auto-generated MEMORY.md indexes per project. Drag-and-drop entries between projects to reorganize.
 
 **Session browser** — Searchable list of all sessions with a split-pane transcript viewer. Tool calls are collapsible disclosure rows showing input parameters and results. Sessions without full transcripts fall back to user prompts from history.jsonl. Filter by project. Delete sessions with full cleanup across all data files.
 
-**MCP server editor** — Visual config for stdio (command + args + env), SSE, HTTP, and WebSocket transports. Reads from `~/.claude.json`, `.mcp.json`, or `claude_desktop_config.json` depending on scope. Shows plugin-provided servers in a read-only section.
+**MCP server editor** — Visual config for stdio (command + args + env), SSE, HTTP, and WebSocket transports. Reads from `~/.claude.json`, `.mcp.json`, or `claude_desktop_config.json` depending on scope. Shows plugin-provided servers in a read-only section. Approval status badges (enabled/disabled/pending) with right-click approve/deny controls. Test connection button sends an MCP initialize handshake to verify the server works.
 
 **Disk cleanup** — One-click cleanup for debug logs, shell snapshots, file history, and cache. Confirmation dialogs show file counts and sizes before deleting.
 
@@ -61,13 +65,13 @@ Sources/
   Models/        ClaudeSettings, ConfigScope, MemoryEntry, SessionHistory,
                  MCPConfig, SessionStats
   ViewModels/    AppState, ConfigEditor (with undo + file watching),
-                 MarkdownFileEditor, MCPConfigEditor
+                 MarkdownFileEditor, MCPConfigEditor, MCPConnectionTester
   Views/
     Sidebar/     SidebarView (grouped sections + scope picker), DetailView (router)
     Detail/      GeneralSettingsView, PermissionsView, HooksView, PluginsView,
                  SandboxView, AdvancedSettingsView, ClaudeMdView, MemoryBrowserView,
                  MCPServersView, SessionBrowserView, AnalyticsView, DiskUsageView,
-                 RawJSONView
+                 RawJSONView, EffectiveConfigView
     Components/  OptionalToggle, OptionalPicker, OptionalStepper, described() modifier
 ```
 
