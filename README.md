@@ -35,7 +35,9 @@ Claude Code stores its configuration across a sprawl of JSON files, Markdown doc
 
 **MCP server editor** — Visual config for stdio (command + args + env), SSE, HTTP, and WebSocket transports. Reads from `~/.claude.json`, `.mcp.json`, or `claude_desktop_config.json` depending on scope. Shows plugin-provided servers in a read-only section. Approval status badges (enabled/disabled/pending) with right-click approve/deny controls. Test connection button sends an MCP initialize handshake to verify the server works.
 
-**Disk cleanup** — One-click cleanup for debug logs, shell snapshots, file history, and cache. Confirmation dialogs show file counts and sizes before deleting.
+**File history** — Browse versioned file snapshots saved during past sessions. Split-pane viewer shows sessions on the left and file content on the right, with copy-to-clipboard.
+
+**Disk cleanup** — One-click cleanup for debug logs, shell snapshots, file history, and cache. Confirmation dialogs show file counts and sizes before deleting. Session pruning honors `cleanupPeriodDays` to remove old transcripts, metadata, and file history in bulk.
 
 ## Building
 
@@ -72,7 +74,7 @@ Sources/
     Detail/      GeneralSettingsView, PermissionsView, HooksView, PluginsView,
                  SandboxView, AdvancedSettingsView, ClaudeMdView, MemoryBrowserView,
                  MCPServersView, SessionBrowserView, AnalyticsView, DiskUsageView,
-                 RawJSONView, EffectiveConfigView
+                 RawJSONView, EffectiveConfigView, FileHistoryView
     Components/  OptionalToggle, OptionalPicker, OptionalStepper, described() modifier
 ```
 
