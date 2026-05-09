@@ -1,14 +1,24 @@
 import SwiftUI
+import AppKit
 
 struct SessionBrowserView: View {
     @Environment(AppState.self) private var appState
     @State private var sessions: [SessionEntry] = []
-    @State private var selectedSession: SessionEntry?
+    @State private var selectedSessionIDs: Set<SessionEntry.ID> = []
     @State private var messages: [SessionMessage] = []
     @State private var isHistoryFallback = false
     @State private var isLoading = true
     @State private var searchText = ""
     @State private var showDeleteConfirm = false
+
+    private var selectedSessions: [SessionEntry] {
+        sessions.filter { selectedSessionIDs.contains($0.id) }
+    }
+
+    private var singleSelectedSession: SessionEntry? {
+        guard selectedSessionIDs.count == 1, let id = selectedSessionIDs.first else { return nil }
+        return sessions.first { $0.id == id }
+    }
 
     private var filteredSessions: [SessionEntry] {
         var result = sessions
@@ -23,7 +33,8 @@ struct SessionBrowserView: View {
             let q = searchText.lowercased()
             result = result.filter {
                 $0.firstPrompt.lowercased().contains(q) ||
-                $0.displayProject.lowercased().contains(q)
+                $0.displayProject.lowercased().contains(q) ||
+                ($0.customTitle?.lowercased().contains(q) ?? false)
             }
         }
 
@@ -61,11 +72,18 @@ struct SessionBrowserView: View {
                     ProgressView("Loading sessions…")
                         .frame(maxHeight: .infinity)
                 } else {
-                    List(filteredSessions, selection: $selectedSession) { session in
+                    List(filteredSessions, selection: $selectedSessionIDs) { session in
                         VStack(alignment: .leading, spacing: 3) {
-                            Text(session.firstPrompt.isEmpty ? "(no prompt)" : session.firstPrompt)
-                                .lineLimit(2)
-                                .truncationMode(.tail)
+                            HStack(spacing: 6) {
+                                if session.customTitle != nil {
+                                    Image(systemName: "tag.fill")
+                                        .font(.caption2)
+                                        .foregroundStyle(.tint)
+                                }
+                                Text(session.displayName)
+                                    .lineLimit(2)
+                                    .truncationMode(.tail)
+                            }
                             HStack(spacing: 8) {
                                 Text(session.timeAgo)
                                     .font(.caption)
@@ -81,32 +99,64 @@ struct SessionBrowserView: View {
                             }
                         }
                         .padding(.vertical, 2)
-                        .tag(session)
                         .contextMenu {
-                            Button("Delete Session", role: .destructive) {
-                                selectedSession = session
+                            Button("Copy Resume Command") {
+                                copyResumeCommand(for: session)
+                            }
+                            Divider()
+                            let actingCount = selectedSessionIDs.contains(session.id) ? selectedSessionIDs.count : 1
+                            Button(actingCount > 1 ? "Delete \(actingCount) Sessions" : "Delete Session", role: .destructive) {
+                                if !selectedSessionIDs.contains(session.id) {
+                                    selectedSessionIDs = [session.id]
+                                }
                                 showDeleteConfirm = true
                             }
                         }
                     }
                     .listStyle(.inset)
                 }
+
+                // Hidden Cmd-Delete shortcut to delete selection from the list
+                Button {
+                    showDeleteConfirm = true
+                } label: {
+                    EmptyView()
+                }
+                .keyboardShortcut(.delete, modifiers: .command)
+                .disabled(selectedSessionIDs.isEmpty)
+                .frame(width: 0, height: 0)
+                .opacity(0)
+                .accessibilityHidden(true)
             }
             .frame(minWidth: 280, idealWidth: 320)
 
             // Message viewer
             VStack(spacing: 0) {
-                if let session = selectedSession {
+                if let session = singleSelectedSession {
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(session.firstPrompt.isEmpty ? "Session" : session.firstPrompt)
+                            Text(session.displayName)
                                 .font(.headline)
                                 .lineLimit(1)
+                            if session.customTitle != nil, !session.firstPrompt.isEmpty {
+                                Text(session.firstPrompt)
+                                    .font(.caption)
+                                    .foregroundStyle(.tertiary)
+                                    .lineLimit(1)
+                            }
                             Text("\(session.displayProject) · \(session.lastTimestamp.formatted(date: .abbreviated, time: .shortened))")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
                         Spacer()
+                        Button {
+                            copyResumeCommand(for: session)
+                        } label: {
+                            Label("Copy Resume", systemImage: "doc.on.doc")
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                        .help("Copy `\(session.resumeCommand)` to the clipboard")
                         Button(role: .destructive) {
                             showDeleteConfirm = true
                         } label: {
@@ -150,6 +200,21 @@ struct SessionBrowserView: View {
                             .padding(16)
                         }
                     }
+                } else if selectedSessionIDs.count > 1 {
+                    VStack(spacing: 16) {
+                        Image(systemName: "checklist")
+                            .font(.system(size: 48))
+                            .foregroundStyle(.secondary)
+                        Text("\(selectedSessionIDs.count) sessions selected")
+                            .font(.title2)
+                        Button(role: .destructive) {
+                            showDeleteConfirm = true
+                        } label: {
+                            Label("Delete \(selectedSessionIDs.count) Sessions", systemImage: "trash")
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     ContentUnavailableView(
                         "Select a Session",
@@ -161,22 +226,30 @@ struct SessionBrowserView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .onAppear { reload() }
-        .onChange(of: selectedSession) { _, session in
-            loadTranscript(for: session)
+        .onChange(of: selectedSessionIDs) { _, _ in
+            loadTranscript(for: singleSelectedSession)
         }
-        .alert("Delete Session?", isPresented: $showDeleteConfirm) {
+        .alert(deleteAlertTitle, isPresented: $showDeleteConfirm) {
             Button("Cancel", role: .cancel) {}
             Button("Delete", role: .destructive) {
-                if let session = selectedSession {
-                    SessionHistory.deleteSession(session)
-                    selectedSession = nil
-                    messages = []
-                    reload()
+                let toDelete = selectedSessions
+                let deletedIDs = Set(toDelete.map { $0.id })
+                for s in toDelete {
+                    SessionHistory.deleteSession(s)
                 }
+                sessions.removeAll { deletedIDs.contains($0.id) }
+                selectedSessionIDs = []
+                messages = []
             }
+            .keyboardShortcut("d", modifiers: .command)
         } message: {
             Text("This will remove the transcript, analytics, and history entries. This cannot be undone.")
         }
+    }
+
+    private var deleteAlertTitle: String {
+        let n = selectedSessionIDs.count
+        return n > 1 ? "Delete \(n) Sessions?" : "Delete Session?"
     }
 
     private func reload() {
@@ -188,6 +261,12 @@ struct SessionBrowserView: View {
                 isLoading = false
             }
         }
+    }
+
+    private func copyResumeCommand(for session: SessionEntry) {
+        let pb = NSPasteboard.general
+        pb.clearContents()
+        pb.setString(session.resumeCommand, forType: .string)
     }
 
     private func loadTranscript(for session: SessionEntry?) {

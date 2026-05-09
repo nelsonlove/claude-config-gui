@@ -9,6 +9,19 @@ struct SessionEntry: Identifiable, Hashable {
     let messageCount: Int
     let firstTimestamp: Date
     let lastTimestamp: Date
+    let customTitle: String?
+
+    var displayName: String {
+        if let t = customTitle, !t.isEmpty { return t }
+        return firstPrompt.isEmpty ? "(no prompt)" : firstPrompt
+    }
+
+    var resumeCommand: String {
+        let resume = "claude --resume \(sessionId)"
+        guard !project.isEmpty else { return resume }
+        let escaped = project.replacingOccurrences(of: "'", with: "'\\''")
+        return "cd '\(escaped)' && \(resume)"
+    }
 
     var displayProject: String {
         project.replacingOccurrences(
@@ -87,15 +100,59 @@ struct SessionHistory {
             }
         }
 
-        return sessions.map { sid, info in
-            SessionEntry(
+        let transcriptIndex = buildTranscriptIndex()
+        var cache = SessionTitleCache.load()
+
+        let entries: [SessionEntry] = sessions.map { sid, info in
+            let title = transcriptIndex[sid].flatMap { cache.title(for: sid, at: $0) }
+            return SessionEntry(
                 id: sid, sessionId: sid, project: info.project,
                 firstPrompt: info.first, messageCount: info.count,
                 firstTimestamp: Date(timeIntervalSince1970: info.firstTS / 1000),
-                lastTimestamp: Date(timeIntervalSince1970: info.lastTS / 1000)
+                lastTimestamp: Date(timeIntervalSince1970: info.lastTS / 1000),
+                customTitle: title
             )
         }
-        .sorted { $0.lastTimestamp > $1.lastTimestamp }
+
+        cache.pruneMissing(keeping: Set(transcriptIndex.keys))
+        cache.saveIfDirty()
+
+        return entries.sorted { $0.lastTimestamp > $1.lastTimestamp }
+    }
+
+    /// Build a map from sessionId -> transcript URL by walking ~/.claude/projects/*/<id>.jsonl once.
+    private static func buildTranscriptIndex() -> [String: URL] {
+        let projectsDir = claudePath("projects")
+        let fm = FileManager.default
+        guard let projects = try? fm.contentsOfDirectory(at: projectsDir, includingPropertiesForKeys: nil)
+        else { return [:] }
+
+        var map: [String: URL] = [:]
+        for project in projects {
+            guard let files = try? fm.contentsOfDirectory(at: project, includingPropertiesForKeys: nil) else { continue }
+            for f in files where f.pathExtension == "jsonl" {
+                map[f.deletingPathExtension().lastPathComponent] = f
+            }
+        }
+        return map
+    }
+
+    /// Scan a transcript for the last `custom-title` line.
+    /// Used by SessionTitleCache when its mtime/size check misses.
+    static func scanLastCustomTitle(at url: URL) -> String? {
+        guard let content = try? String(contentsOf: url, encoding: .utf8) else { return nil }
+        var last: String? = nil
+        for line in content.split(separator: "\n", omittingEmptySubsequences: true)
+            where line.contains("\"type\":\"custom-title\"")
+        {
+            guard let data = line.data(using: .utf8),
+                  let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let title = dict["customTitle"] as? String,
+                  !title.isEmpty
+            else { continue }
+            last = title
+        }
+        return last
     }
 
     /// Load messages, preferring full transcript, falling back to history.
