@@ -93,6 +93,10 @@ Sources/
 - Not a plugin development environment
 - Not an MCP server runtime — just config editing
 
+## Status & roadmap
+
+Phases 1–4 (Settings, Knowledge, MCP, Analytics & Housekeeping) have shipped — see the **At a Glance** table above for what's in. Open work is tracked in [GitHub Issues](https://github.com/nelsonlove/claude-config-gui/issues): polish (backups, FSEvents), Knowledge-group additions (slash commands, skills, hook scripts, statusline), and a deferred distribution track (signing, notarization, DMG, Sparkle).
+
 ## License
 
 MIT
